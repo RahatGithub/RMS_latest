@@ -3,7 +3,7 @@ from django.db import models
 
 class Batch(models.Model):
     id = models.AutoField
-    batch_no = models.CharField(max_length=6, default="")               
+    batch_no = models.CharField(max_length=6, default="") #pk          
     session = models.CharField(max_length=8, default="")                
     
 
@@ -44,8 +44,10 @@ class Teacher(models.Model):
     id = models.AutoField 
     name = models.CharField(max_length=60, default="")
     designation = models.CharField(max_length=60, default="")
-    institute = models.CharField(max_length=100, default="")
     department = models.CharField(max_length=100, default="")
+    institute = models.CharField(max_length=100, default="")
+    code = models.CharField(max_length=50, default="")
+    
 
 
 class TheoryCourseResult(models.Model):

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Batch, Semester, Course, Student, TheoryCourseResult, SessionalCourseResult, Result, Teacher
 import json
-
+from random import randint
 
 # this is the dashboard
 def dashboard(request):
@@ -10,8 +10,7 @@ def dashboard(request):
         if request.POST['form_name'] == 'add_batch_form':
             batch_no = request.POST['batch_no']
             session = request.POST['session']
-            batch_id = batch_no + '_' + session
-            batch = Batch.objects.create(batch_id=batch_id, batch_no=batch_no, session=session)
+            batch = Batch.objects.create(batch_no=batch_no, session=session)
             batches = Batch.objects.all()   
             return render(request, 'index.html', {'batches' : batches, 'teachers' : teachers}) 
         elif request.POST['form_name'] == 'add_teacher_form':
@@ -19,7 +18,8 @@ def dashboard(request):
             designation = request.POST['designation']
             department = request.POST['department']
             institute = request.POST['institute']
-            Teacher.objects.create(name=name, designation=designation, department=department, institute=institute)
+            code = (name.replace(" ", "")).lower()[:5] + '_' + str(randint(1000,9999))  # Generating a code/password for the teacher
+            Teacher.objects.create(name=name, designation=designation, department=department, institute=institute, code=code)
             teachers = Teacher.objects.all()
             return render(request, 'index.html', {'batches' : batches, 'teachers' : teachers})
         elif request.POST['form_name'] == 'gradesheet_generator_form':
@@ -259,6 +259,38 @@ def add_semester(request, batch_no):
     semester_no = len(semesters)+1
     Semester.objects.create(batch_no=batch_no, semester_no=semester_no)
     return redirect('/main/')
+
+
+
+def delete_batch(request, batch_no):
+    # if request.method == 'POST':
+    #     if request.POST['form_name'] == 'delete_record_form':
+    #         institute = request.POST['institute']
+    #         department = request.POST['department']
+    #         session = request.POST['session']
+    #         records = GradeSheet.objects.filter(institute=institute, department=department, session=session)
+    #         for record in records:
+    #             record.delete()
+    #         print(records)
+    #         return redirect("/")
+
+    #     print("not from 'delete_record_form'")
+    
+    # print("not a post request")
+    
+    try:
+        batch = Batch.objects.get(batch_no=batch_no)
+        batch.delete()
+    except:
+        pass
+
+    return redirect("/")
+
+
+
+def students_view(request, batch_no):  
+    students = Student.objects.filter(batch_no=batch_no)
+    return render(request, 'main/students.html', {'batch_no':batch_no, 'students':students})
 
 
 
