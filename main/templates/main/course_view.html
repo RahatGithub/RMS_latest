@@ -1,0 +1,166 @@
+{% extends 'main/base.html' %}
+
+{% block title %} {{course.course_code}} ({{course.batch_no}}) {% endblock %}
+
+{% block css %}
+.content-table {
+    border-collapse: collapse;
+    min-width: 1535px;
+  }
+  table,
+  tr,
+  th,
+  td {
+    border: 1px solid gray;
+    text-align: center;
+  }
+{% endblock %}
+
+{% block body %}
+
+<div class="container mx-auto">
+    <div
+      class="info flex justify-between p-3 pl-10 pr-10 items-center bg-gray-200 my-5 rounded"
+    >
+      <div class="info-left flex flex-col gap-2 items-start">
+        <h3 class="text-4xl font-bold text-indigo-500">{{course.batch_no}}</h3>
+        <h3 class="text-xl font-medium text-gray-500">Semester: {{course.semester_no}}</h3>
+      </div>
+      <div class="info-right flex flex-col gap-2 text-gray-600 font-medium">
+        <p class="font-normal text-lg">
+          <span class="text-indigo-500 font-semibold">Course Title:</span>
+          {{course.course_title}}
+        </p>
+        <p class="font-normal text-lg">
+          <span class="text-indigo-500 font-semibold">Course Code:</span>
+          {{course.course_code}}
+        </p>
+        <p class="font-normal text-lg">
+          <span class="text-indigo-500 font-semibold">Credits:</span>
+          {{course.course_credits}}
+        </p>
+        <p class="font-normal text-lg">
+          <span class="text-indigo-500 font-semibold">Course Type:</span>
+          {{course.course_type}}
+        </p>
+        <p class="font-normal text-lg">
+          <span class="text-indigo-500 font-semibold">Course Teacher:</span>
+          {{course.course_teacher}}
+        </p>
+      </div>
+    </div>
+
+
+<div class="tabulation-sheet container mx-auto">
+      <div class="courses-head flex justify-between py-3">
+        <h2 class="text-2xl font-bold text-indigo-500">Results</h2>
+
+        <div class="btns flex gap-3">
+          <div class="upload-btn">
+            <label class="block">
+            <span class="sr-only">Choose File</span>
+            <input type="file" accept=".csv"
+              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border file:border-indigo-100 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+            </label>
+          </div>
+
+          <button class="add-btn ml-auto bg-indigo-500 text-indigo-50 px-4 py-1 rounded-full hover:bg-indigo-600 duration-200">Add</button>
+          <!-- <button class="add-btn ml-auto bg-indigo-500 text-indigo-50 px-4 py-1 rounded-full hover:bg-indigo-600 duration-200">Edit</button>
+          <button class="add-btn ml-auto bg-indigo-200 text-indigo-700 px-4 py-1 rounded-full border border-indigo-500 hover:text-indigo-50 hover:bg-indigo-600 duration-200">Delete</button> -->
+        </div>
+      </div>
+
+    <!-- results table  -->
+    {% if course.course_type == "Theory" %}
+    <table class="content-table py-3">
+      <tr>
+        <th>Sl no.</th>
+        <th colspan="2">Reg.</th>
+        <th>Part A Decode</th>
+        <th>Part A Marks</th>
+        <th>Part B Decode</th>
+        <th>Part B Marks</th>
+        <th>Assessment Marks</th>
+        <th>Total Marks</th>
+        <th>GP</th>
+        <th>LG</th>
+        <th>Action</th>
+      </tr>
+      {% for result in results %}
+      <tr>
+        <td>{{forloop.counter}}</td>
+        <td colspan="2">{{result.reg_no}}</td>
+        <td>{{result.part_a_decode}}</td>
+        <td>{{result.part_a_marks}}</td>
+        <td>{{result.part_b_decode}}</td>
+        <td>{{result.part_b_marks}}</td>
+        <td>{{result.assessment_marks}}</td>
+        <td>{{result.total_marks}}</td>
+        <td>{{result.GP}}</td>
+        <td>{{result.LG}}</td>
+        <td>
+            <div class="button flex gap-3 items-center justify-center text-xl"> 
+              <button class="edit hover:text-indigo-500 duration-200" ><ion-icon name="create-outline"></ion-icon>
+              </button>
+              <button class="delete hover:text-indigo-500 duration-200" ><ion-icon name="trash-outline"></ion-icon>
+              </button>
+            </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    {% elif course.course_type == "Sessional" %}
+    <table class="content-table py-3">
+        <tr>
+          <th>Sl no.</th>
+          <th colspan="2">Reg.</th>
+          <th>Lab marks</th>
+          <th>Assessment Marks</th>
+          <th>Total Marks</th>
+          <th>GP</th>
+          <th>LG</th>
+          <th>Action</th>
+        </tr>
+        {% for result in results %}
+        <tr>
+          <td>{{forloop.counter}}</td>
+          <td colspan="2">{{result.reg_no}}</td>
+          <td>{{result.lab_marks}}</td>
+          <td>{{result.assessment_marks}}</td>
+          <td>{{result.total_marks}}</td>
+          <td>{{result.GP}}</td>
+          <td>{{result.LG}}</td>
+          <td>
+              <div class="button flex gap-3 items-center justify-center text-xl"> 
+                <button class="edit hover:text-indigo-500 duration-200" ><ion-icon name="create-outline"></ion-icon>
+                </button>
+                <button class="delete hover:text-indigo-500 duration-200" ><ion-icon name="trash-outline"></ion-icon>
+                </button>
+              </div>
+          </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+  </div>
+
+
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+{% endblock %}
+
+
+
+{% block js %}
+
+<!-- **This js code section should be used in all pages that has a form in it** -->
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<!-- **** -->
+
+{% endblock %}
