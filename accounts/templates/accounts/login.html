@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>login</title>
+</head>
+<body>
+  <div class="relative flex min-h-screen text-gray-800 antialiased flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
+  <div class="relative py-3 sm:w-96 mx-auto text-center">
+    <span class="text-2xl font-light ">Login to your account</span>
+    <div class="mt-4 bg-white shadow-md rounded-lg text-left">
+      <div class="h-2 bg-indigo-500 rounded-t-md"></div>
+      <form class="px-8 py-6" action="" method="POST"> {% csrf_token %}
+        <label class="block font-semibold"> Email </label>
+        <input type="text" name="email" placeholder="Email" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md" required>
+        <label class="block mt-3 font-semibold"> Password </label>
+        <input type="password" name="password" placeholder="Password" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md " required>
+          <div class="flex justify-between items-baseline">
+            <button type="submit" class="mt-4 bg-indigo-500 text-white py-2 px-6 rounded-md hover:bg-indigo-600 ">
+              Login
+            </button>
+            <div class="flex items-center mb-4">
+                <input type="checkbox" id="is_admin" name="is_admin">
+                <label for="is_admin"> Are you an admin?</label>
+            </div>
+            <!-- <fieldset class="flex gap-3">
+                <input type="radio" name="user_type" value="admin">Admin 
+                <input type="radio" name="user_type" value="stuff">Stuff 
+            </fieldset> -->
+            <!-- <div class="flex gap-3">
+              Admin<input type="radio" name="user_type" value="admin">
+              Stuff<input type="radio" name="stuff" value="stuff">
+            </div> -->
+          </div>
+      </form>
+      
+  </div>
+</div>
+</body>
+</html>

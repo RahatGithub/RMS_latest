@@ -1,31 +1,28 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
-
+from main.models import Teacher
 
 def login(request):
-    form_name = request.POST.get('form_name')
     if request.method == "POST":
-        if form_name == 'admin_form':
-            email = request.POST['admin_email']
-            password = request.POST['admin_password']
-            username = User.objects.filter(email=email)[0].username
-            user = auth.authenticate(request, username=username, password=password)
-            if user.is_superuser: 
-                auth.login(request, user)
-                return redirect("/main/")
-            else:           
-                return render(request, "accounts/login.html")
-        elif form_name == 'stuff_form':
-            email = request.POST['stuff_email']
-            password = request.POST['stuff_password']
-            username = User.objects.filter(email=email)[0].username
-            user = auth.authenticate(request, username=username, password=password)
-            if user.is_staff:
-                auth.login(request, user)
-                return redirect("/main/")
-            else:           
-                return render(request, "accounts/login.html")
+        email = request.POST['email']
+        password = request.POST['password']
+        is_admin = request.POST['is_admin']
+        print(email, password, is_admin)
+        if is_admin == 'on':
+            try:
+                User.objects.get(email=email, password=password)
+                return HttpResponse("logged in as admin")         
+            except:           
+                return HttpResponse("couldn't find such user (admin)")
+        else:
+            try:
+                Teacher.objects.get(email=email, code=password)
+                return HttpResponse("logged in as stuff...now go to teacher's dashboard")
+            except:
+                return HttpResponse("couldn't find such user")
+    
     return render(request, "accounts/login.html")
 
 

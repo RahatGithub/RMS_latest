@@ -12,16 +12,18 @@ def dashboard(request):
             session = request.POST['session']
             batch = Batch.objects.create(batch_no=batch_no, session=session)
             batches = Batch.objects.all()   
-            return render(request, 'index.html', {'batches' : batches, 'teachers' : teachers}) 
+            teachers = Teacher.objects.all()
+            return render(request, 'main/dashboard.html', {'batches' : batches, 'teachers' : teachers}) 
         elif request.POST['form_name'] == 'add_teacher_form':
             name = request.POST['name']
+            email = request.POST['email']
             designation = request.POST['designation']
             department = request.POST['department']
             institute = request.POST['institute']
             code = (name.replace(" ", "")).lower()[:5] + '_' + str(randint(1000,9999))  # Generating a code/password for the teacher
-            Teacher.objects.create(name=name, designation=designation, department=department, institute=institute, code=code)
+            Teacher.objects.create(name=name, email=email, designation=designation, department=department, institute=institute, code=code)
             teachers = Teacher.objects.all()
-            return render(request, 'index.html', {'batches' : batches, 'teachers' : teachers})
+            return render(request, 'main/dashboard.html', {'batches' : batches, 'teachers' : teachers})
         elif request.POST['form_name'] == 'gradesheet_generator_form':
             reg_no = request.POST['reg_no']
             student = Student.objects.get(reg_no=reg_no)
@@ -262,35 +264,23 @@ def add_semester(request, batch_no):
 
 
 
-def delete_batch(request, batch_no):
-    # if request.method == 'POST':
-    #     if request.POST['form_name'] == 'delete_record_form':
-    #         institute = request.POST['institute']
-    #         department = request.POST['department']
-    #         session = request.POST['session']
-    #         records = GradeSheet.objects.filter(institute=institute, department=department, session=session)
-    #         for record in records:
-    #             record.delete()
-    #         print(records)
-    #         return redirect("/")
-
-    #     print("not from 'delete_record_form'")
-    
-    # print("not a post request")
-    
+def delete_batch(request, batch_no):    
     try:
         batch = Batch.objects.get(batch_no=batch_no)
+        print(batch_no)
         batch.delete()
     except:
         pass
 
-    return redirect("/")
+    return redirect("/main/")
 
 
 
 def students_view(request, batch_no):  
     students = Student.objects.filter(batch_no=batch_no)
-    return render(request, 'main/students.html', {'batch_no':batch_no, 'students':students})
+    batch = Batch.objects.filter(batch_no=batch_no).first()
+    session = batch.session 
+    return render(request, 'main/students.html', {'batch_no':batch_no, 'session':session, 'students':students})
 
 
 

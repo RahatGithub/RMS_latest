@@ -72,5 +72,11 @@
 
     <!-- custom internal js of child template -->
     {% block js %} {% endblock %}
+
+    <script>
+      if ( window.history.replaceState ) {
+          window.history.replaceState( null, null, window.location.href );
+      }
+  </script>
 </body>
 </html>

@@ -43,6 +43,7 @@ class Student(models.Model):
 class Teacher(models.Model):
     id = models.AutoField 
     name = models.CharField(max_length=60, default="")
+    email = models.CharField(max_length=100, default="")
     designation = models.CharField(max_length=60, default="")
     department = models.CharField(max_length=100, default="")
     institute = models.CharField(max_length=100, default="")
