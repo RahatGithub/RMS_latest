@@ -16,12 +16,11 @@ def dashboard(request):
             teachers = Teacher.objects.all()
             return render(request, 'main/dashboard.html', {'batches' : batches, 'teachers' : teachers}) 
         elif request.POST['form_name'] == 'add_teacher_form':
-            name = request.POST['name']
-            email = request.POST['email']
-            phone = request.POST['phone']
             first_name = request.POST['first_name']
             last_name = request.POST['last_name']
             name = first_name + ' ' + last_name
+            email = request.POST['email']
+            phone = request.POST['phone']
             designation = request.POST['designation']
             department = request.POST['department']
             institute = request.POST['institute']
@@ -30,13 +29,14 @@ def dashboard(request):
             username = (name.replace(" ", "")).lower()[:5] + '_' + str(randint(100,999)) 
             
             # Generating a code/password for the teacher: 
-            password =  chr(randint(97,123)) + chr(randint(97,123)) + chr(randint(97,123))+ chr(randint(48,58)) + chr(randint(48,58)) + chr(randint(48,58)) 
+            password =  chr(randint(97,123)) + chr(randint(97,123)) + chr(randint(97,123))+ chr(randint(48,58)) + chr(randint(48,58)) + chr(randint(48,58)) + chr(randint(35,39))
             
             Teacher.objects.create(name=name, email=email, phone=phone, designation=designation, department=department, institute=institute)
             user = User.objects.create_user(username, email, password)
             user.first_name, user.last_name = first_name, last_name
             user.save()
             teachers = Teacher.objects.all()
+            batches = Batch.objects.all() 
             new_teacher_info = {
                 'username' : username,
                 'password' : password,
