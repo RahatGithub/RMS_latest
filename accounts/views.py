@@ -6,23 +6,15 @@ from main.models import Teacher
 
 def login(request):
     if request.method == "POST":
-        email = request.POST['email']
+        username = request.POST['username']
         password = request.POST['password']
-        is_admin = request.POST['is_admin']
-        print(email, password, is_admin)
-        if is_admin == 'on':
-            try:
-                User.objects.get(email=email, password=password)
-                return HttpResponse("logged in as admin")         
-            except:           
-                return HttpResponse("couldn't find such user (admin)")
-        else:
-            try:
-                Teacher.objects.get(email=email, code=password)
-                return HttpResponse("logged in as stuff...now go to teacher's dashboard")
-            except:
-                return HttpResponse("couldn't find such user")
-    
+        user = auth.authenticate(request, username=username, password=password)
+        if user:
+            auth.login(request, user)
+            return redirect("/main/")
+        else:           
+            messages.info(request, "Wrong username or password!")
+            return render(request, "accounts/login.html") 
     return render(request, "accounts/login.html")
 
 

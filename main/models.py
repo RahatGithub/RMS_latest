@@ -44,10 +44,10 @@ class Teacher(models.Model):
     id = models.AutoField 
     name = models.CharField(max_length=60, default="")
     email = models.CharField(max_length=100, default="")
+    phone = models.CharField(max_length=15, default="")
     designation = models.CharField(max_length=60, default="")
     department = models.CharField(max_length=100, default="")
     institute = models.CharField(max_length=100, default="")
-    code = models.CharField(max_length=50, default="")
     
 
 

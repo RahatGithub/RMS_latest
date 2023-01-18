@@ -3,7 +3,12 @@
 {% block title %} Dashboard {% endblock %}
 
 {% block body %}
-
+  <!-- {% if new_teacher_info %}
+  <p>{{username}}</p>
+  <p>{{password}}</p>
+  <p>{{email}}</p>
+  {% endif %} -->
+  
   <!-- modal -->
     <!-- Code block starts -->
     <dh-component>
@@ -248,7 +253,6 @@
                 <p class="font-semibold text-xl text-indigo-500">
                   {{teacher.name}}
                 </p>
-                <p>({{teacher.code}})</p>
                 <p class="italic font-medium text-gray-500">{{teacher.designation}},</p>
                 <p class="italic font-medium text-gray-500">{{teacher.department}},</p>
                 <p class="italic font-medium text-gray-500">{{teacher.institute}}</p>

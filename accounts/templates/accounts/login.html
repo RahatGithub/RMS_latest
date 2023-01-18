@@ -14,20 +14,20 @@
     <div class="mt-4 bg-white shadow-md rounded-lg text-left">
       <div class="h-2 bg-indigo-500 rounded-t-md"></div>
       <form class="px-8 py-6" action="" method="POST"> {% csrf_token %}
-        <label class="block font-semibold"> Email </label>
-        <input type="text" name="email" placeholder="Email" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md" required>
+        <label class="block font-semibold"> Username </label>
+        <input type="text" name="username" placeholder="username" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md" required>
         <label class="block mt-3 font-semibold"> Password </label>
         <input type="password" name="password" placeholder="Password" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md " required>
           <div class="flex justify-between items-baseline">
             <button type="submit" class="mt-4 bg-indigo-500 text-white py-2 px-6 rounded-md hover:bg-indigo-600 ">
               Login
             </button>
-            <div class="flex items-center mb-4">
-                <input type="checkbox" id="is_admin" name="is_admin">
+            <!-- <div class="flex items-center mb-4">
+                <input type="checkbox" id="is_admin" name="is_admin" checked="checked">
                 <label for="is_admin"> Are you an admin?</label>
-            </div>
+            </div> -->
             <!-- <fieldset class="flex gap-3">
-                <input type="radio" name="user_type" value="admin">Admin 
+                <input type="radio" name="user_type" value="admin" checked="checked">Admin 
                 <input type="radio" name="user_type" value="stuff">Stuff 
             </fieldset> -->
             <!-- <div class="flex gap-3">
@@ -36,8 +36,12 @@
             </div> -->
           </div>
       </form>
-      
   </div>
 </div>
+  <script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+  </script>
 </body>
 </html>

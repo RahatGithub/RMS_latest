@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.contrib.auth.models import User, auth
 from .models import Batch, Semester, Course, Student, TheoryCourseResult, SessionalCourseResult, Result, Teacher
 import json
 from random import randint
@@ -17,13 +18,31 @@ def dashboard(request):
         elif request.POST['form_name'] == 'add_teacher_form':
             name = request.POST['name']
             email = request.POST['email']
+            phone = request.POST['phone']
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            name = first_name + ' ' + last_name
             designation = request.POST['designation']
             department = request.POST['department']
             institute = request.POST['institute']
-            code = (name.replace(" ", "")).lower()[:5] + '_' + str(randint(1000,9999))  # Generating a code/password for the teacher
-            Teacher.objects.create(name=name, email=email, designation=designation, department=department, institute=institute, code=code)
+            
+            # Generating a username for the teacher:
+            username = (name.replace(" ", "")).lower()[:5] + '_' + str(randint(100,999)) 
+            
+            # Generating a code/password for the teacher: 
+            password =  chr(randint(97,123)) + chr(randint(97,123)) + chr(randint(97,123))+ chr(randint(48,58)) + chr(randint(48,58)) + chr(randint(48,58)) 
+            
+            Teacher.objects.create(name=name, email=email, phone=phone, designation=designation, department=department, institute=institute)
+            user = User.objects.create_user(username, email, password)
+            user.first_name, user.last_name = first_name, last_name
+            user.save()
             teachers = Teacher.objects.all()
-            return render(request, 'main/dashboard.html', {'batches' : batches, 'teachers' : teachers})
+            new_teacher_info = {
+                'username' : username,
+                'password' : password,
+                'email' : email
+            }
+            return render(request, 'main/dashboard.html', {'batches' : batches, 'teachers' : teachers, 'new_teacher_info' : new_teacher_info})
         elif request.POST['form_name'] == 'gradesheet_generator_form':
             reg_no = request.POST['reg_no']
             student = Student.objects.get(reg_no=reg_no)
