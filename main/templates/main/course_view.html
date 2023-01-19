@@ -5,23 +5,11 @@
 {% block title %} {{course.course_code}} ({{course.batch_no}}) {% endblock %}
 
 {% block css %}
-
-.illustrator-img 
+.plus-btn 
 {
-  height: 450px;
+  height: 50px; 
+  width: 50px;
 }
-
-.illustrator-details 
-{
-  background-color: #92e3a9;
-}
-
-.illustrator-details > p 
-{
-  font-size: 20px;
-  line-height: 18px;
-}
-
 {% endblock %}
 
 {% block body %}
@@ -48,9 +36,17 @@
     <div class="d-flex justify-content-center mb-4">
       <h4 class="bg-primary text-center text-white p-3 rounded">Course Results</h4>
     </div>
-    <table class="table table-hover">
+
+    {% if request.user.is_superuser %}
+      <div class="d-flex justify-content-end">
+        <!-- add new course result record modal trigger -->
+        <img src="{% static 'main/images/plus.png' %}" alt="add-record" class="plus-btn mb-2" type="button" data-toggle="modal" data-target="#AddResultModal">
+      </div>
+    {% endif %}
+
+    <table class="table table-hover bg-light">
         <thead>
-          <tr>
+          <tr class="text-center">
             <th scope="col">Reg</th>
             <th scope="col">Part A decode</th>
             <th scope="col">Part A marks</th>
@@ -64,7 +60,7 @@
         </thead>
         <tbody>
             {% for result in results %}
-            <tr>
+            <tr class="text-center">
                 <td>{{result.reg_no}}</td>
                 <td>{{result.part_a_decode}}</td>
                 <td>{{result.part_a_marks}}</td>
@@ -78,85 +74,166 @@
             {% endfor %}
         </tbody>
       </table>
-
-      {% if request.user.is_superuser %}
-      <form method="post" class="w-25 bg-light border border-primary p-3"> {% csrf_token %}  
-        <h6>Add new record</h6>
-        <div class="form-group">
-            <label class="form-label">Reg no</label>
-            <input type="text" name="reg_no"> <br>
-            <label class="form-label">Part A decode</label>
-            <input type="text" name="part_a_decode"> <br>
-            <label class="form-label">Part A marks</label>
-            <input type="number" name="part_a_marks"> <br>
-            <label class="form-label">Part B decode</label>
-            <input type="text" name="part_b_decode"> <br>
-            <label class="form-label">Part B marks</label>
-            <input type="number" name="part_b_marks"> <br>
-            <label class="form-label">Assessment marks</label>
-            <input type="number" name="assessment_marks"> <br>
-            <label class="form-label">Total marks</label>
-            <input type="number" name="total_marks"> <br>
-            <label class="form-label">GP</label>
-            <input type="text" name="GP"> <br>
-            <label class="form-label">LG</label>
-            <input type="text" name="LG"> <br>
-        </div>
-        <button type="submit" class="btn btn-primary">Add</button>
-      </form>
-    {% endif %}
-
 </section>
-{% elif course.course_type == "Sessional" %}
-<section class="mx-2 my-5">
-    <h4>Course Results:</h4>
-    <table class="table table-hover">
-        <thead>
-          <tr>
-            <th scope="col">Reg</th>
-            <th scope="col">Lab marks</th>
-            <th scope="col">Assessment marks</th>
-            <th scope="col">Total marks</th>
-            <th scope="col">GP</th>
-            <th scope="col">LG</th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for result in results %}
-            <tr>
-                <td>{{result.reg_no}}</td>
-                <td>{{result.lab_marks}}</td>
-                <td>{{result.assessment_marks}}</td>
-                <td>{{result.total_marks}}</td>
-                <td>{{result.GP}}</td>
-                <td>{{result.LG}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-      </table>
-      {% if request.user.is_superuser %}
-      <form method="post" class="w-25 bg-light border border-primary p-3"> {% csrf_token %}  
-        <h6>Add new record</h6>
-        <div class="form-group">
-            <label class="form-label">Reg no</label>
-            <input type="text" name="reg_no"> <br>
-            <label class="form-label">Lab marks</label>
-            <input type="text" name="lab_marks"> <br>
-            <label class="form-label">Assessment marks</label>
-            <input type="number" name="assessment_marks"> <br>
-            <label class="form-label">Total marks</label>
-            <input type="number" name="total_marks"> <br>
-            <label class="form-label">GP</label>
-            <input type="text" name="GP"> <br>
-            <label class="form-label">LG</label>
-            <input type="text" name="LG"> <br>
-        </div>
-        <button type="submit" class="btn btn-primary">Add</button>
-      </form>
-    {% endif %}
 
+{% elif course.course_type == "Sessional" %}
+<section class="m-5 p-5">
+  <div class="d-flex justify-content-center mb-4">
+    <h4 class="bg-primary text-center text-white p-3 rounded">Course Results</h4>
+  </div>
+
+  {% if request.user.is_superuser %}
+    <div class="d-flex justify-content-end">
+      <!-- add new course result record modal trigger -->
+      <img src="{% static 'main/images/plus.png' %}" alt="add-record" class="plus-btn mb-2" type="button" data-toggle="modal" data-target="#AddLabResultModal">
+    </div>
+  {% endif %}
+
+  <table class="table table-hover bg-light">
+      <thead>
+        <tr class="text-center">
+          <th scope="col">Reg</th>
+          <th scope="col">Lab marks</th>
+          <th scope="col">Assessment marks</th>
+          <th scope="col">Total marks</th>
+          <th scope="col">GP</th>
+          <th scope="col">LG</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for result in results %}
+          <tr class="text-center">
+              <td>{{result.reg_no}}</td>
+              <td>{{result.lab_marks}}</td>
+              <td>{{result.assessment_marks}}</td>
+              <td>{{result.total_marks}}</td>
+              <td>{{result.GP}}</td>
+              <td>{{result.LG}}</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+    </table>
 </section>
 {% endif %}
 
+
+
+<!-- add course result record modal starts -->
+<div class="modal fade" id="AddResultModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="AddResultLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="AddResultLabel">Add New Result Record</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" class="p-3"> {% csrf_token %}  
+          <div class="form-group">
+            <label for="">Registration No</label>
+            <select name="reg_no" id="reg_no" class="form-control">
+              {% for student in students %}
+                <option value={{student.reg_no}}>{{student.reg_no}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group d-flex justify-content-between">
+            <div>
+              <label class="form-label">Part A decode</label>
+              <input type="text" name="part_a_decode" class="form-control">
+            </div>
+            <div>
+              <label class="form-label">Part A marks</label>
+              <input type="number" name="part_a_marks" class="form-control">
+            </div>
+          </div>
+          <div class="form-group d-flex justify-content-between">
+            <div>
+              <label class="form-label">Part B decode</label>
+              <input type="text" name="part_b_decode" class="form-control">
+            </div>
+            <div>
+              <label class="form-label">Part B marks</label>
+              <input type="number" name="part_b_marks" class="form-control">
+            </div>
+          </div>
+          <div class="form-group d-flex justify-content-between">
+            <div>
+              <label class="form-label">Assessment Marks</label>
+              <input type="text" name="assessment_marks" class="form-control">
+            </div>
+            <div>
+              <label class="form-label">Total Marks</label>
+              <input type="number" name="total_marks" class="form-control">
+            </div>
+          </div>
+          <div class="form-group d-flex justify-content-between">
+            <div>
+              <label class="form-label">Grade Point</label>
+              <input type="text" name="GP" class="form-control">
+            </div>
+            <div>
+              <label class="form-label">Letter Grade</label>
+              <input type="text" name="LG" class="form-control">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary col-3">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- add course result record modal ends -->
+
+
+
+<!-- add lab course result record modal starts -->
+<div class="modal fade" id="AddLabResultModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="AddLabResultLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="AddLabResultLabel">Add New Result Record</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" class="p-3"> {% csrf_token %}  
+          <div class="form-group">
+            <label for="">Registration No</label>
+            <select name="reg_no" id="reg_no" class="form-control">
+              {% for student in students %}
+                <option value={{student.reg_no}}>{{student.reg_no}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group d-flex justify-content-between">
+            <div>
+              <label class="form-label">Assessment Marks</label>
+              <input type="text" name="assessment_marks" class="form-control">
+            </div>
+            <div>
+              <label class="form-label">Total Marks</label>
+              <input type="number" name="total_marks" class="form-control">
+            </div>
+          </div>
+          <div class="form-group d-flex justify-content-between">
+            <div>
+              <label class="form-label">Grade Point</label>
+              <input type="text" name="GP" class="form-control">
+            </div>
+            <div>
+              <label class="form-label">Letter Grade</label>
+              <input type="text" name="LG" class="form-control">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary col-3">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- add lab course result record modal ends -->
 
 {% endblock %}

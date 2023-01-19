@@ -167,6 +167,7 @@ def semester_view(request, batch_no, semester_no):
 def course_view(request, batch_no, semester_no, course_type, course_code):
     
     course = Course.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
+    students = Student.objects.filter(batch_no=batch_no)
     
     if request.method == "POST":
         if course_type == "Theory":
@@ -260,7 +261,7 @@ def course_view(request, batch_no, semester_no, course_type, course_code):
                                                       current_semester_total_point=current_semester_total_point, 
                                                       current_semester_GPA=current_semester_GPA)
         
-        params = {'course':course,'results':results}
+        params = {'course':course,'results':results, 'students':students}
         return render(request, 'main/course_view.html', params)
     
     else:   # if not a POST request
@@ -269,7 +270,7 @@ def course_view(request, batch_no, semester_no, course_type, course_code):
         elif course_type == "Sessional":
             results = SessionalCourseResult.objects.filter(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
         
-        params = {'course':course,'results':results}
+        params = {'course':course,'results':results, 'students':students}
         return render(request, 'main/course_view.html', params)
 
 
