@@ -85,6 +85,8 @@ def dashboard(request):
 
 
 def semester_view(request, batch_no, semester_no):  
+    teachers = Teacher.objects.all()
+
     if request.method == "POST":
         batch_no = batch_no
         semester_no = semester_no
@@ -106,7 +108,9 @@ def semester_view(request, batch_no, semester_no):
         
         result = Result.objects.filter(batch_no=batch_no, semester_no=semester_no)
         
-        return render(request, 'main/semester_view.html', {'batch_no':batch_no, 'semester_no':semester_no, 'courses':courses, 'result':result})
+        params = {'batch_no':batch_no, 'semester_no':semester_no, 'courses':courses, 'result':result, 'teachers':teachers}
+
+        return render(request, 'main/semester_view.html', params)
     
     # if not a POST request:
     courses = Course.objects.filter(batch_no=batch_no, semester_no=semester_no)
@@ -160,7 +164,9 @@ def semester_view(request, batch_no, semester_no):
             
         table_sheet.append(a_record)
     
-    return render(request, 'main/semester_view.html', {'batch_no':batch_no, 'semester_no':semester_no, 'courses':courses, 'table_sheet':table_sheet})
+    params = {'batch_no':batch_no, 'semester_no':semester_no, 'courses':courses, 'table_sheet':table_sheet, 'teachers':teachers}
+
+    return render(request, 'main/semester_view.html', params)
 
 
 

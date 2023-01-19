@@ -5,11 +5,6 @@
 {% block title %} {{course.course_code}} ({{course.batch_no}}) {% endblock %}
 
 {% block css %}
-.plus-btn 
-{
-  height: 50px; 
-  width: 50px;
-}
 {% endblock %}
 
 {% block body %}
@@ -34,7 +29,7 @@
 {% if course.course_type == "Theory" %}
 <section class="mx-2 my-5 p-5">
     <div class="d-flex justify-content-center mb-4">
-      <h4 class="bg-primary text-center text-white p-3 rounded">Course Results</h4>
+      <h4 class="bg-primary text-center text-white p-3 rounded-pill col-2">Course Results</h4>
     </div>
 
     {% if request.user.is_superuser %}

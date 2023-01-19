@@ -1,160 +1,217 @@
 {% extends 'main/base.html' %}
 
+{% load static %}
+
 {% block title %} {{semester_no}} ({{batch_no}}) {% endblock %}
 
 {% block css %}
-
-  
+.course-card 
+{
+  max-width: 430px;
+}
 {% endblock %}
 
 {% block body %}
 
-<div class="container mx-auto pb-3">
-    <!-- <div class="title flex flex-col justify-center items-center bg-indigo-500 py-5 rounded">
-      <h1 class="text-4xl font-bold text-indigo-50">Batch 14th</h1>
-      <p class="text-xl text-indigo-50 font-semibold">Semester : 1</p>
-    </div> -->
-
-
-    <div class="courses flex flex-col">
-
-      <div class="courses-head flex justify-between py-3">
-        <h2 class="text-2xl font-semibold text-indigo-500">Courses</h2>
-        <button
-            class="add-btn ml-auto bg-indigo-500 text-indigo-50 px-4 py-1 rounded hover:bg-indigo-600 duration-200"
-          >
-            + Add
-          </button>
+<!-- illustrator and details -->
+<section class="text-with-img row">
+  <div class="col-6 d-flex justify-content-end align-items-center">
+    <div class="text-dark p-4 rounded illustrator-details shadow w-50 h-50 d-flex justify-content-center align-items-center">
+      <div>
+        <h4><b>Batch no:</b> {{batch_no}}</h4>
+        <h4><b>Semester no:</b> {{semester_no}}</h4>
       </div>
+    </div>
+  </div>
+  <div class="col-6 d-flex justify-content-start align-items-center">
+    <img src="{% static 'main/images/teaching1.png' %}" alt="student" class="illustrator-img">
+  </div>
+</section>
 
-      <div class="courses-card flex gap-10  flex-wrap bg-gray-100 p-3 rounded ">
 
-        {% for course in courses %}
-        <div
-          class="course-card bg-white text-indigo-500 p-4 rounded shadow flex flex-col gap-5 items-center h-55 w-80 border-2 border-indigo-50/80 hover:shadow-lg hover:border-indigo-500 hover:border-2 duration-300"
-        >
-          <h2 class="course-title text-xl font-semibold">{{course.course_title}}</h2>
-          <div class="code-type flex justify-between gap-3 text-sm font-medium text-gray-700">
-            <p><span class="font-bold text-indigo-500">Code:</span> {{course.course_code}}</p>
-            <p><span class="font-bold text-indigo-500">Type:</span> {{course.course_type}}</p>
-            <p><span class="font-bold text-indigo-500">Credit:</span> {{course.course_credits}}</p>
-          </div>
-          <div class="creadit-teacher flex text-gray-700 font-medium ">
-            <p><span class="font-bold text-indigo-500">Teacher:</span> {{course.course_teacher}}</p>
-          </div>
-          <div class="flex gap-12 justify-center items-center py-3 w-full">
-            
-            <button
-              class="bg-indigo-50 border rounded-full px-2 hover:border-indigo-300"
-            >
-              Delete
-            </button>
-            <button
-              class="bg-indigo-50 border rounded-full px-2 hover:border-indigo-300"
-            >
-              Edit
-            </button>
-            <a
-              href="/main/courses/{{batch_no}}/{{semester_no}}/{{course.course_type}}/{{course.course_code}}" class="bg-indigo-50 border rounded-full px-2 hover:border-indigo-300"
-            >
-              View
+<!-- courses list -->
+<section class="m-4 p-3">
+  <div class="d-flex justify-content-center mt-5 mb-3">
+    <h4 class="bg-primary text-center text-white p-3 rounded-pill col-2">Courses</h4>
+  </div>
+
+  {% if request.user.is_superuser %}
+    <div class="d-flex justify-content-end">
+      <!-- add new course modal trigger -->
+      <img src="{% static 'main/images/plus.png' %}" alt="add-record" class="plus-btn mb-2" type="button" data-toggle="modal" data-target="#AddCourseModal">
+    </div>
+  {% endif %}
+
+  <section class="course-list px-5 py-3 d-flex">
+      {% for course in courses %}
+      <div class="card course-card m-2 float-left shadow">
+        <div class="card-body">
+            <h4 class="card-title">{{course.course_title}}</h4>
+            <h5 class="card-title">Course code: {{course.course_code}}</h5>
+            <h5 class="card-title">Credits: {{course.course_credits}}</h5>
+            <h5 class="card-title">Teacher: {{course.course_teacher}}</h5>
+        </div>
+        <div class="d-flex justify-content-center pb-3">
+          <div>
+            <a class="mx-2" href="/main/courses/{{batch_no}}/{{semester_no}}/{{course.course_type}}/{{course.course_code}}">
+              <img src="{% static 'main/images/play-button.png' %}" alt="edit" class="card-icon" type="button">
             </a>
           </div>
-        </div>
-        {% endfor %}
-        
-      </div>
-      </div>
-    </div>
-
-    <div class="tabulation-sheet container mx-auto">
-      <div class="courses-head flex justify-between py-3">
-        <h2 class="text-2xl font-bold text-indigo-500">Tabulation Sheet</h2>
-
-        <div class="btns flex">
-          <div class="upload-btn">
-            <label class="block">
-            <span class="sr-only">Chose File</span>
-            <input type="file" accept=".csv"
-              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border file:border-indigo-100 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
-            </label>
+          <div class="mx-2">
+            <img src="{% static 'main/images/edit.png' %}" alt="edit" class="card-icon" type="button" data-toggle="modal" data-target="#">
           </div>
-
-          <a href="" class="add-btn ml-auto bg-indigo-500 text-indigo-50 px-4 py-1 rounded-full hover:bg-indigo-600 duration-200">Download</a>
-        </div>
+          <div class="mx-2">
+            <img src="{% static 'main/images/delete1.png' %}" alt="delete" class="card-icon" type="button" data-toggle="modal" data-target="#">
+          </div>
       </div>
-    <table class="content-table">
-        {% comment %} <tr>
-          <th colspan="6" rowspan="2"></th>
-          <th colspan="2">CSE-201 </th>
-          <th colspan="2">CSE-201</th>
-          <th colspan="2">CSE-201</th>
-          <th colspan="2">CSE-201</th>
-          <th colspan="2">CSE-201</th>
-          <th colspan="2">CSE-201</th>
-          <th colspan="2">CSE-201</th>
-          <th colspan="2">CSE-201</th>
-          <th colspan="2">CSE-201</th>
-          <th colspan="3" rowspan="2">2nd Semester</th>
-          <th colspan="3" rowspan="2">3rd Semester</th>
-        </tr> {% endcomment %}
+      </div>
+      {% endfor %}
+  </section>
+</section>
+
+
+
+<!-- {% if request.user.is_superuser %}
+    <form method="post" class="w-25 bg-light border border-primary p-3"> {% csrf_token %}  
+        <h6>Add new course</h6>
+        <div class="form-group">
+            <label class="form-label">Course title</label>
+            <input type="text" name="course_title"> <br>
+            <label class="form-label">Course code</label>
+            <input type="text" name="course_code"> <br>
+            <label class="form-label">Course type</label>
+            <input type="text" name="course_type"> <br>
+            <label class="form-label">Credits</label>
+            <input type="text" name="course_credits"> <br>
+            <label class="form-label">Course teacher</label>
+            <input type="text" name="course_teacher"> <br>
+        </div>
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+    {% endif %} -->
+
+
+    
+<section class="m-2">
+    <h4>Tabulation sheet:</h4>
+    <table class="table table-bordered">
         <thead>
-          <tr class="text-center">
-            <th scope="col" rowspan="2">Sl no.</th>
-              <th scope="col" rowspan="2">Reg no</th>
-              <th scope="col" rowspan="2">Student Name</th>
-              {% for course in courses %}
-                  <th scope="col" colspan="2">{{course.course_code}} <br> ({{course.course_credits}})</th>
-              {% endfor %}
-              <th scope="col" colspan="3">Semester: {{semester_no}}</th>
-              {% if semester_no > 1 %}
-                  <th scope="col" colspan="3" class="bg-secondary text-light">Semester: 1 to {{semester_no}}</th>
-              {% endif %}
-          </tr>
-          <tr class="text-center">
-              {% for course in courses %}
-                  <th>GP</th>
-                  <th>LG</th>
-              {% endfor %}
-              <th>credit</th>
-              <th>GPA</th>
-              <th>LG</th>
-              {% if semester_no > 1 %}
-                  <th class="bg-secondary text-light">credit</th>
-                  <th class="bg-secondary text-light">CGPA</th>
-                  <th class="bg-secondary text-light">LG</th>
-              {% endif %}
-          </tr>
-      </thead>
-      <tbody>
-        {% for tb_sheet in table_sheet %}
             <tr class="text-center">
-                <td>{{tb_sheet.reg_no}}</td>
-                <td>{{tb_sheet.name}}</td>
-
-                {% for course, result in tb_sheet.course_results.items %} 
-                    <td>{{result.GP}}</td>
-                    <td>{{result.LG}}</td>
-                {% endfor %} 
-
-                {% for i in tb_sheet.range %}
-                    <td></td>
+                <th scope="col" rowspan="2">Reg no</th>
+                <th scope="col" rowspan="2">Student Name</th>
+                {% for course in courses %}
+                    <th scope="col" colspan="2">{{course.course_code}} <br> ({{course.course_credits}})</th>
                 {% endfor %}
-                
-                <td>{{tb_sheet.current_semester_credits}}</td>
-                <td>{{tb_sheet.current_semester_GPA}}</td>
-                <td>{{tb_sheet.current_semester_LG}}</td>
+                <th scope="col" colspan="3">Semester: {{semester_no}}</th>
                 {% if semester_no > 1 %}
-                    <th class="">{{tb_sheet.overall_credits}}</th>
-                    <th class="">{{tb_sheet.overall_CGPA}}</th>
-                    <th class="">{{tb_sheet.overall_LG}}</th>
+                    <th scope="col" colspan="3" class="bg-secondary text-light">Semester: 1 to {{semester_no}}</th>
                 {% endif %}
-            </tr> 
-        {% endfor %}
-      </tbody>
-    </table>
-    </div>
+            </tr>
+            <tr class="text-center">
+                {% for course in courses %}
+                    <th>GP</th>
+                    <th>LG</th>
+                {% endfor %}
+                <th>credit</th>
+                <th>GPA</th>
+                <th>LG</th>
+                {% if semester_no > 1 %}
+                    <th class="bg-secondary text-light">credit</th>
+                    <th class="bg-secondary text-light">CGPA</th>
+                    <th class="bg-secondary text-light">LG</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for tb_sheet in table_sheet %}
+                <tr class="text-center">
+                    <td>{{tb_sheet.reg_no}}</td>
+                    <td>{{tb_sheet.name}}</td>
 
+                    {% for course, result in tb_sheet.course_results.items %} 
+                        <td>{{result.GP}}</td>
+                        <td>{{result.LG}}</td>
+                    {% endfor %} 
+
+                    {% for i in tb_sheet.range %}
+                        <td></td>
+                    {% endfor %}
+                    
+                    <td>{{tb_sheet.current_semester_credits}}</td>
+                    <td>{{tb_sheet.current_semester_GPA}}</td>
+                    <td>{{tb_sheet.current_semester_LG}}</td>
+                    {% if semester_no > 1 %}
+                        <th class="">{{tb_sheet.overall_credits}}</th>
+                        <th class="">{{tb_sheet.overall_CGPA}}</th>
+                        <th class="">{{tb_sheet.overall_LG}}</th>
+                    {% endif %}
+                </tr> 
+            {% endfor %}
+        </tbody>
+      </table>
+</section>
+
+
+
+
+
+<!-- add lab course result record modal starts -->
+<div class="modal fade" id="AddCourseModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="AddCourseLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="AddCourseLabel">Add New Teacher</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" class="p-3"> {% csrf_token %}  
+          <div class="form-group">
+            <label class="form-label">Course Title</label>
+            <input type="text" name="course_title" class="form-control">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Course Type</label>
+            <input type="text" name="course_type" class="form-control">
+          </div>
+          <div class="form-group d-flex justify-content-between">
+            <div>
+              <label class="form-label">Course Code</label>
+              <input type="text" name="course_code" class="form-control">
+            </div>
+            <div>
+              <label class="form-label">Credits</label>
+              <input type="text" name="course_credits" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="">Course Teacher</label>
+            <select name="course_teacher" id="course_teacher" class="form-control">
+              {% for teacher in teachers %}
+                <option value={{teacher.name}}>{{teacher.name}} ({{teacher.designation}})</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary col-3 mt-2">Add</button>
+        </form>
+      </div>
+    </div>
   </div>
+</div>
+<!-- add lab course result record modal ends -->
+
+{% endblock %}
+
+
+{% block js %}
+
+<!-- **This js code section should be used in all pages that has a form in it** -->
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<!-- **** -->
 
 {% endblock %}
