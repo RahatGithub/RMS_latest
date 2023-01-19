@@ -7,7 +7,7 @@
 {% block css %}
 .course-card 
 {
-  max-width: 430px;
+  width: 430px;
 }
 {% endblock %}
 
@@ -91,67 +91,84 @@
     {% endif %} -->
 
 
-    
+
+<!-- Tabulation Sheet -->
 <section class="m-2">
-    <h4>Tabulation sheet:</h4>
-    <table class="table table-bordered">
-        <thead>
-            <tr class="text-center">
-                <th scope="col" rowspan="2">Reg no</th>
-                <th scope="col" rowspan="2">Student Name</th>
-                {% for course in courses %}
-                    <th scope="col" colspan="2">{{course.course_code}} <br> ({{course.course_credits}})</th>
-                {% endfor %}
-                <th scope="col" colspan="3">Semester: {{semester_no}}</th>
-                {% if semester_no > 1 %}
-                    <th scope="col" colspan="3" class="bg-secondary text-light">Semester: 1 to {{semester_no}}</th>
-                {% endif %}
-            </tr>
-            <tr class="text-center">
-                {% for course in courses %}
-                    <th>GP</th>
-                    <th>LG</th>
-                {% endfor %}
-                <th>credit</th>
-                <th>GPA</th>
-                <th>LG</th>
-                {% if semester_no > 1 %}
-                    <th class="bg-secondary text-light">credit</th>
-                    <th class="bg-secondary text-light">CGPA</th>
-                    <th class="bg-secondary text-light">LG</th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for tb_sheet in table_sheet %}
-                <tr class="text-center">
-                    <td>{{tb_sheet.reg_no}}</td>
-                    <td>{{tb_sheet.name}}</td>
+  <div class="d-flex justify-content-center mt-5 mb-3">
+    <h4 class="bg-primary text-center text-white p-3 rounded-pill col-2">Tabulation Sheet</h4>
+  </div>
 
-                    {% for course, result in tb_sheet.course_results.items %} 
-                        <td>{{result.GP}}</td>
-                        <td>{{result.LG}}</td>
-                    {% endfor %} 
+  {% if request.user.is_superuser %}
+    <div class="d-flex justify-content-end mb-2">
+      <!-- File upload -->
+      <a href="#" type="button">
+        <img src="{% static 'main/images/choose.png' %}" alt="choose-file" class="card-icon mx-3" > 
+      </a>
+      <a href="#" type="button">
+        <img src="{% static 'main/images/upload.png' %}" alt="upload-file" class="card-icon mx-3" > 
+      </a>
+      <a href="#" type="button">
+        <img src="{% static 'main/images/download.png' %}" alt="download-file" class="card-icon mx-3" > 
+      </a>
+    </div>
+  {% endif %}
 
-                    {% for i in tb_sheet.range %}
-                        <td></td>
-                    {% endfor %}
-                    
-                    <td>{{tb_sheet.current_semester_credits}}</td>
-                    <td>{{tb_sheet.current_semester_GPA}}</td>
-                    <td>{{tb_sheet.current_semester_LG}}</td>
-                    {% if semester_no > 1 %}
-                        <th class="">{{tb_sheet.overall_credits}}</th>
-                        <th class="">{{tb_sheet.overall_CGPA}}</th>
-                        <th class="">{{tb_sheet.overall_LG}}</th>
-                    {% endif %}
-                </tr> 
-            {% endfor %}
-        </tbody>
-      </table>
+  <table class="table table-bordered bg-light" style="max-width: 100vw">
+    <thead>
+      <tr class="text-center">
+          <th scope="col" rowspan="2">Reg no</th>
+          <th scope="col" rowspan="2">Student Name</th>
+          {% for course in courses %}
+              <th scope="col" colspan="2">{{course.course_code}} <br> ({{course.course_credits}})</th>
+          {% endfor %}
+          <th scope="col" colspan="3">Semester: {{semester_no}}</th>
+          {% if semester_no > 1 %}
+              <th scope="col" colspan="3">Semester: 1 to {{semester_no}}</th>
+          {% endif %}
+      </tr>
+      <tr class="text-center">
+          {% for course in courses %}
+              <th>GP</th>
+              <th>LG</th>
+          {% endfor %}
+          <th>credit</th>
+          <th>GPA</th>
+          <th>LG</th>
+          {% if semester_no > 1 %}
+              <th class="">credit</th>
+              <th class="">CGPA</th>
+              <th class="">LG</th>
+          {% endif %}
+      </tr>
+    </thead>
+      <tbody>
+        {% for tb_sheet in table_sheet %}
+          <tr class="text-center">
+              <td>{{tb_sheet.reg_no}}</td>
+              <td>{{tb_sheet.name}}</td>
+
+              {% for course, result in tb_sheet.course_results.items %} 
+                  <td>{{result.GP}}</td>
+                  <td>{{result.LG}}</td>
+              {% endfor %} 
+
+              {% for i in tb_sheet.range %}
+                  <td></td>
+              {% endfor %}
+              
+              <td>{{tb_sheet.current_semester_credits}}</td>
+              <td>{{tb_sheet.current_semester_GPA}}</td>
+              <td>{{tb_sheet.current_semester_LG}}</td>
+              {% if semester_no > 1 %}
+                  <th class="">{{tb_sheet.overall_credits}}</th>
+                  <th class="">{{tb_sheet.overall_CGPA}}</th>
+                  <th class="">{{tb_sheet.overall_LG}}</th>
+              {% endif %}
+          </tr> 
+        {% endfor %}
+    </tbody>
+  </table>
 </section>
-
-
 
 
 
@@ -187,9 +204,9 @@
           </div>
           <div class="form-group">
             <label for="">Course Teacher</label>
-            <select name="course_teacher" id="course_teacher" class="form-control">
+            <select name="course_teacher_email" class="form-control">
               {% for teacher in teachers %}
-                <option value={{teacher.name}}>{{teacher.name}} ({{teacher.designation}})</option>
+                <option value={{teacher.email}}>{{teacher.name}} ({{teacher.designation}})</option>
               {% endfor %}
             </select>
           </div>

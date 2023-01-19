@@ -86,33 +86,6 @@ def dashboard(request):
 
 def semester_view(request, batch_no, semester_no):  
     teachers = Teacher.objects.all()
-
-    if request.method == "POST":
-        batch_no = batch_no
-        semester_no = semester_no
-        course_code = request.POST['course_code']
-        course_title = request.POST['course_title']
-        course_credits = request.POST['course_credits']
-        course_type = request.POST['course_type']
-        course_teacher = request.POST['course_teacher']
-        
-        course = Course.objects.create(batch_no=batch_no, 
-                                       semester_no=semester_no, 
-                                       course_code=course_code, 
-                                       course_title=course_title, 
-                                       course_credits=course_credits,
-                                       course_type=course_type,
-                                       course_teacher=course_teacher)
-        
-        courses = Course.objects.filter(batch_no=batch_no, semester_no=semester_no)
-        
-        result = Result.objects.filter(batch_no=batch_no, semester_no=semester_no)
-        
-        params = {'batch_no':batch_no, 'semester_no':semester_no, 'courses':courses, 'result':result, 'teachers':teachers}
-
-        return render(request, 'main/semester_view.html', params)
-    
-    # if not a POST request:
     courses = Course.objects.filter(batch_no=batch_no, semester_no=semester_no)
     students = Student.objects.filter(batch_no=batch_no)
     result_objects = Result.objects.filter(batch_no=batch_no, semester_no=semester_no)
@@ -163,6 +136,35 @@ def semester_view(request, batch_no, semester_no):
             a_record['range'] = range(2*(len(courses)-len(a_record['course_results'])))
             
         table_sheet.append(a_record)
+
+    if request.method == "POST":
+        batch_no = batch_no
+        semester_no = semester_no
+        course_code = request.POST['course_code']
+        course_title = request.POST['course_title']
+        course_credits = request.POST['course_credits']
+        course_type = request.POST['course_type']
+        course_teacher_email = request.POST['course_teacher_email']
+        course_teacher_obj = Teacher.objects.filter(email=course_teacher_email).first()
+        course_teacher = course_teacher_obj.name 
+        
+        course = Course.objects.create(batch_no=batch_no, 
+                                       semester_no=semester_no, 
+                                       course_code=course_code, 
+                                       course_title=course_title, 
+                                       course_credits=course_credits,
+                                       course_type=course_type,
+                                       course_teacher=course_teacher)
+        
+        courses = Course.objects.filter(batch_no=batch_no, semester_no=semester_no)
+        
+        result = Result.objects.filter(batch_no=batch_no, semester_no=semester_no)
+        
+        params = {'batch_no':batch_no, 'semester_no':semester_no, 'courses':courses, 'result':result, 'table_sheet':table_sheet, 'teachers':teachers}
+
+        return render(request, 'main/semester_view.html', params)
+    
+    
     
     params = {'batch_no':batch_no, 'semester_no':semester_no, 'courses':courses, 'table_sheet':table_sheet, 'teachers':teachers}
 
