@@ -32,13 +32,13 @@
   </div>
 
   {% if request.user.is_superuser %}
-    <div class="d-flex justify-content-end">
+    <div class="d-flex justify-content-start">
       <!-- add new course modal trigger -->
       <img src="{% static 'main/images/plus.png' %}" alt="add-record" class="plus-btn mb-2" type="button" data-toggle="modal" data-target="#AddCourseModal">
     </div>
   {% endif %}
 
-  <section class="course-list px-5 py-3 d-flex">
+  <section class="row row-cols-4 px-5 py-3 d-flex">
       {% for course in courses %}
       <div class="card course-card m-2 float-left shadow">
         <div class="card-body">

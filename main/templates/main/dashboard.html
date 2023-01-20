@@ -16,23 +16,17 @@
 {% block body %}
   
 {% if new_teacher_info %}
-<!-- New Teacher Login Credentials Modal -->
-<div class="modal fade" id="LoginInfoModal" tabindex="-1" aria-labelledby="LoginInfoModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="LoginInfoModalLabel">Remember these credentials to login later</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <ul class="list-group">
-          <li class="list-group-item"><b>Email: </b>{{new_teacher_info.email}}</li>
-          <li class="list-group-item"><b>Username<small class="text-warning">(auto generated)</small>: </b>{{new_teacher_info.username}}</li>
-          <li class="list-group-item"><b>Password<small class="text-warning">(auto generated)</small>: </b>{{new_teacher_info.password}}</li>
-        </ul>
-      </div>
+<!-- New Teacher Login Credentials Alert -->
+<div class="container d-flex justify-content-center">
+  <div class="alert alert-info" role="alert" id="LoginInfoAlert">
+    <div class="d-flex justify-content-end">
+      <button id="CloseLoginInfo" class="btn btn-danger"><b>X</b></button>
+    </div>
+    <h5>Remember credentials to login later</h5>
+    <div>
+      <p><b>Email: </b>{{new_teacher_info.email}}</p>
+      <p><b>Username <i>(auto generated)</i>: </b>{{new_teacher_info.username}}</p>
+      <p><b>Password <i>(auto generated)</i>: </b>{{new_teacher_info.password}}</p>
     </div>
   </div>
 </div>
@@ -72,11 +66,83 @@
 
 
 <!-- Add teacher modal -->
-    
+<div class="modal fade" id="AddTeacherModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="AddTeacherLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="AddTeacherLabel">Add New Teacher</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" class="p-3"> {% csrf_token %}  
+          <input type="hidden" name="form_name" value="add_teacher_form">
+          <div class="form-group d-flex justify-content-between">
+            <div>
+              <label class="form-label">First Name</label>
+              <input type="text" name="first_name" class="form-control">
+            </div>
+            <div>
+              <label class="form-label">Last Name</label>
+              <input type="text" name="last_name" class="form-control">
+            </div>
+          </div>
+          <div class="form-group d-flex justify-content-between">
+            <div>
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-control">
+            </div>
+            <div>
+              <label class="form-label">Phone</label>
+              <input type="text" name="phone" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Designation</label>
+            <select name="designation" class="form-control"> 
+              <option value="Lecturer">Lecturer</option>
+              <option value="Assisstant Proffessor">Assisstant Proffessor</option>
+              <option value="Associate Proffessor">Associate Proffessor</option>
+              <option value="Proffessor">Proffessor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Department</label>
+            <select name="department" class="form-control">
+              <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+              <option value="Electrical & Electronics Engineering">Electrical & Electronics Engineering</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+              <option value="Industrial & Production Engineerng">Industrial & Production Engineerng</option>
+              <option value="Civil Engineerng">Civil Engineerng</option>
+              <option value="Mathematics">Mathematics</option>
+              <option value="Custom">Custom</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Institute:</label>
+          <select name="institute" class="form-control">
+            <option value="Sylhet Engineering College">Sylhet Engineering College</option>
+            <option value="Shahjalal University of Science & Technology">Shahjalal University of Science & Technology</option>
+            <option value="Leading University">Leading University</option>
+            <option value="MC College">MC College</option>
+            <option value="Sylhet Agricultural University">Sylhet Agricultural University</option>
+            <option value="Custom">Custom</option>
+          </select>
+          </div>
+          <button type="submit" class="btn btn-primary col-3 mt-2">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
 <!-- main body -->
 <section class="row mx-5 my-3">
-  <div class="col-7">
+  <div class="col-8">
     <div class="d-flex justify-content-center mt-5 mb-3">
       <h4 class="bg-primary text-center text-white p-3 rounded-pill col-2">Batches</h4>
     </div>
@@ -88,12 +154,12 @@
       </div>
     {% endif %}
 
-    <div class="course-list px-5 py-3 d-flex">
+    <div class="row row-cols-3 py-3">
       {% for batch in batches %}
       <div class="card course-card m-2 shadow">
         <div class="card-body">
-            <h3 class="card-title text-center">{{batch.batch_no}}</h3>
-            <h5 class="card-title text-center">{{batch.session}}</h5>
+            <h3 class="card-title text-center">{{batch.batch_no}} <small>({{batch.session}})</small></h3>
+            
             <h6 class="card-title">Semesters:</h6>
             <div class="d-flex">
               {% for semester in batch.semesters %}
@@ -112,7 +178,9 @@
         </div>
         <div class="d-flex justify-content-between pb-3">
           <div class="mx-2 ml-4">
-            <p class="special-bg text-dark px-2 py-1 rounded-pill"><b>Students</b></p>
+            <a href="students/{{batch.batch_no}}">
+              <p class="special-bg text-dark px-2 py-1 rounded-pill"><b>Students</b></p>
+            </a>
           </div>
           <div class="d-flex justify-content-between">
             <div class="mx-2">
@@ -127,7 +195,7 @@
       {% endfor %}
     </div>
   </div>
-  <div class="col-5">
+  <div class="col-4">
     <!-- row 1 : gradesheet generator -->
     <div class="row d-flex justify-content-center align-items-center bg-light border border-primary rounded pb-3">
       <form action="" method="POST"> {% csrf_token %}
@@ -154,17 +222,17 @@
       {% endif %}
     </div>
     <!-- row 3 : teachers list -->
-    <div class="">
+    <div class="overflow-auto" style="max-height: 500px">
       {% for teacher in teachers %}
-      <div class="p-3 m-2 row shadow">
-        <div class="col-8">
+      <div class="p-3 mx-2 my-3 row shadow">
+        <div class="col-9">
           <h5 class="text-primary">{{teacher.name}}</h5>
-          <p style="line-height:15px;"><b><i>{{teacher.designation}}, {{teacher.department}}</i></b></p>
-          <p style="line-height:15px;"><b><i>{{teacher.institute}}</i></b></p>
+          <p style="line-height:20px;"><b><i>{{teacher.designation}}, {{teacher.department}},</i></b></p>
+          <p style="line-height:20px;"><b><i>{{teacher.institute}}</i></b></p>
         </div>
-        <div class="col-4">
+        <div class="col-3">
           <div class="row d-flex justify-content-center my-1">
-            <a class="mx-2" href="/main/courses/{{batch_no}}/{{semester_no}}/{{course.course_type}}/{{course.course_code}}">
+            <a class="mx-2" href="/main/teachers/{{teacher.institute}}/{{teacher.department}}/{{teacher.name}}">
               <img src="{% static 'main/images/play-button.png' %}" alt="edit" class="card-icon" type="button">
             </a>
           </div>
@@ -181,4 +249,15 @@
   </div>
 </section>
 
+{% endblock %}
+
+{% block js %} 
+<script>
+  const alertbox = document.getElementById("LoginInfoAlert");
+  const closeBtn = document.getElementById("CloseLoginInfo");
+
+  closeBtn.addEventListener("click", function(){
+    alertbox.style.display = "none";
+  })
+</script>
 {% endblock %}

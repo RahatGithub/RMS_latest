@@ -29,7 +29,7 @@ def dashboard(request):
             username = (name.replace(" ", "")).lower()[:5] + '_' + str(randint(100,999)) 
             
             # Generating a code/password for the teacher: 
-            password =  chr(randint(97,123)) + chr(randint(97,123)) + chr(randint(97,123))+ chr(randint(48,58)) + chr(randint(48,58)) + chr(randint(48,58)) + chr(randint(35,39))
+            password =  chr(randint(97,122)) + chr(randint(97,122)) + chr(randint(97,122))+ chr(randint(48,57)) + chr(randint(48,57)) + chr(randint(48,57)) + chr(randint(35,38))
             
             Teacher.objects.create(name=name, email=email, phone=phone, designation=designation, department=department, institute=institute)
             user = User.objects.create_user(username, email, password)
@@ -163,15 +163,15 @@ def semester_view(request, batch_no, semester_no):
         
         result = Result.objects.filter(batch_no=batch_no, semester_no=semester_no)
         
-        params = {'batch_no':batch_no, 'semester_no':semester_no, 'courses':courses, 'result':result, 'table_sheet':table_sheet, 'teachers':teachers}
+        context = {'batch_no':batch_no, 'semester_no':semester_no, 'courses':courses, 'result':result, 'table_sheet':table_sheet, 'teachers':teachers}
 
-        return render(request, 'main/semester_view.html', params)
+        return render(request, 'main/semester_view.html', context)
     
     
     
-    params = {'batch_no':batch_no, 'semester_no':semester_no, 'courses':courses, 'table_sheet':table_sheet, 'teachers':teachers}
+    context = {'batch_no':batch_no, 'semester_no':semester_no, 'courses':courses, 'table_sheet':table_sheet, 'teachers':teachers}
 
-    return render(request, 'main/semester_view.html', params)
+    return render(request, 'main/semester_view.html', context)
 
 
 
@@ -272,8 +272,8 @@ def course_view(request, batch_no, semester_no, course_type, course_code):
                                                       current_semester_total_point=current_semester_total_point, 
                                                       current_semester_GPA=current_semester_GPA)
         
-        params = {'course':course,'results':results, 'students':students}
-        return render(request, 'main/course_view.html', params)
+        context = {'course':course,'results':results, 'students':students}
+        return render(request, 'main/course_view.html', context)
     
     else:   # if not a POST request
         if course_type == "Theory": 
@@ -281,8 +281,8 @@ def course_view(request, batch_no, semester_no, course_type, course_code):
         elif course_type == "Sessional":
             results = SessionalCourseResult.objects.filter(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
         
-        params = {'course':course,'results':results, 'students':students}
-        return render(request, 'main/course_view.html', params)
+        context = {'course':course,'results':results, 'students':students}
+        return render(request, 'main/course_view.html', context)
 
 
 
@@ -348,6 +348,14 @@ def students_view(request, batch_no):
         students = Student.objects.filter(batch_no=batch_no)
 
     return render(request, 'main/students.html', {'batch_no':batch_no, 'session':session, 'students':students})
+
+
+def teacher_profile(request, institute, department, name):
+    teacher = Teacher.objects.filter(institute=institute, department=department, name=name).first() 
+    courses = Course.objects.filter(course_teacher=teacher.name)
+
+    context = {'teacher':teacher, 'courses':courses}
+    return render(request, 'main/teacher_profile.html', context)
 
 
 

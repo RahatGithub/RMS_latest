@@ -1,0 +1,59 @@
+{% extends 'main/base.html' %}
+
+{% load static %}
+
+{% block title %} {{teacher.name}} {% endblock %}
+
+
+
+{% block body %}
+
+<!-- illustrator with detials -->
+<section class="text-with-img row">
+    <div class="col-6 d-flex justify-content-end align-items-center">
+      <img src="{% static 'main/images/teacher1.jpg' %}" alt="teacher" class="illustrator-img">
+    </div>
+    <div class="col-6 d-flex justify-content-start align-items-center">
+      <div class="text-dark p-4 rounded illustrator-details shadow">
+        <p><b>Name:</b> {{teacher.name}}</p>
+        <p><b>Designation:</b> {{teacher.designation}}</p>
+        <p><b>Department:</b> {{teacher.department}}</p>
+        <p><b>Institute:</b> {{teacher.institute}}</p>
+      </div>
+    </div>
+</section>
+
+<!-- courses list -->
+<section class="mx-5">
+    <div class="d-flex justify-content-center mt-5 mb-3">
+        <h5 class="bg-primary text-center text-white p-3 rounded-pill col-2">Courses</h5>
+      </div>
+    <div class="row row-cols-5 mx-5 mb-5">
+        {% for course in courses %}
+        <div class="card course-card m-2 float-left shadow">
+            <div class="card-body">
+                <h5><span class="badge badge-info">{{course.batch_no}}</span></h5>
+                <h5 class="card-title text-primary">{{course.course_title}}</h5>
+                <h5 class="card-title">Course code: {{course.course_code}}</h5>
+                <h5 class="card-title">Credits: {{course.course_credits}}</h5>
+            </div>
+            <div class="d-flex justify-content-center pb-3">
+            <div>
+                <a class="mx-2" href="/main/courses/{{course.batch_no}}/{{course.semester_no}}/{{course.course_type}}/{{course.course_code}}">
+                <img src="{% static 'main/images/play-button.png' %}" alt="edit" class="card-icon" type="button">
+                </a>
+            </div>
+            <div class="mx-2">
+                <img src="{% static 'main/images/edit.png' %}" alt="edit" class="card-icon" type="button" data-toggle="modal" data-target="#">
+            </div>
+            <div class="mx-2">
+                <img src="{% static 'main/images/delete1.png' %}" alt="delete" class="card-icon" type="button" data-toggle="modal" data-target="#">
+            </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+
+{% endblock %}
