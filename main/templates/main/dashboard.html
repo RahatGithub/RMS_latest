@@ -158,7 +158,7 @@
       {% for batch in batches %}
       <div class="card course-card m-2 shadow">
         <div class="card-body">
-            <h3 class="card-title text-center">{{batch.batch_no}} <small>({{batch.session}})</small></h3>
+            <h3 class="card-title text-center text-primary">{{batch.batch_no}} <small>({{batch.session}})</small></h3>
             
             <h6 class="card-title">Semesters:</h6>
             <div class="d-flex">
@@ -182,15 +182,45 @@
               <p class="special-bg text-dark px-2 py-1 rounded-pill"><b>Students</b></p>
             </a>
           </div>
+          {% if request.user.is_superuser %}
           <div class="d-flex justify-content-between">
             <div class="mx-2">
               <img src="{% static 'main/images/edit.png' %}" alt="edit" class="card-icon" type="button" data-toggle="modal" data-target="#">
             </div>
             <div class="mr-4">
-              <img src="{% static 'main/images/delete1.png' %}" alt="delete" class="card-icon" type="button" data-toggle="modal" data-target="#">
+              <!-- cofirm batch delete modal -->
+              <img src="{% static 'main/images/delete1.png' %}" alt="delete" class="card-icon" type="button" data-toggle="modal" data-target="#DeleteBatchModal{{forloop.counter}}">
             </div>
           </div>
+          {% endif %}
       </div>
+      </div>
+
+      <!-- Delete batch modal -->
+      <div class="modal fade" id="DeleteBatchModal{{forloop.counter}}" tabindex="-1" aria-labelledby="DeleteBatchLabel{{forloop.counter}}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="DeleteBatchLabel{{forloop.counter}}">Are you sure?</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>By clicking <span class="text-danger"><b>DELETE</b></span> all records of this batch will be erased.</p> 
+              <h6>Selected Batch:</h6>
+              <ul class="list-group p-3">
+                <h6 class="list-group-item">Batch no: <span class="text-primary">{{batch.batch_no}}</span></h6>
+                <h6 class="list-group-item">Session: <span class="text-primary">{{batch.session}}</span></h6>
+              </ul>
+              <div class="d-flex justify-content-center">
+                <a href="delete_batch/{{batch.batch_no}}">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       {% endfor %}
     </div>
@@ -240,7 +270,37 @@
             <img src="{% static 'main/images/edit.png' %}" alt="edit" class="card-icon" type="button" data-toggle="modal" data-target="#">
           </div>
           <div class="row d-flex justify-content-center my-1">
-            <img src="{% static 'main/images/delete1.png' %}" alt="delete" class="card-icon" type="button" data-toggle="modal" data-target="#">
+            <!-- cofirm teacher delete modal trigger -->
+            <img src="{% static 'main/images/delete1.png' %}" alt="delete" class="card-icon" type="button" data-toggle="modal" data-target="#DeleteTeacherModal{{forloop.counter}}">
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete teacher modal -->
+      <div class="modal fade" id="DeleteTeacherModal{{forloop.counter}}" tabindex="-1" aria-labelledby="DeleteTeacherLabel{{forloop.counter}}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="DeleteTeacherLabel{{forloop.counter}}">Are you sure?</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>By clicking <span class="text-danger"><b>DELETE</b></span> all records of this teacher will be erased.</p> 
+              <h6>Selected Teacher:</h6>
+              <ul class="list-group p-3">
+                <h6 class="list-group-item">Name: <span class="text-primary">{{teacher.name}}</span></h6>
+                <h6 class="list-group-item">Designation: <span class="text-primary">{{teacher.designation}}</span></h6>
+                <h6 class="list-group-item">Department: <span class="text-primary">{{teacher.department}}</span></h6>
+                <h6 class="list-group-item">Institute: <span class="text-primary">{{teacher.institute}}</span></h6>
+              </ul>
+              <div class="d-flex justify-content-center">
+                <a href="delete_teacher/{{teacher.name}}">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -32,7 +32,7 @@
       <h4 class="bg-primary text-center text-white p-3 rounded-pill col-2">Course Results</h4>
     </div>
 
-    {% if request.user.is_superuser %}
+    {% if request.user.is_superuser or user.email == teacher_email %}
       <div class="d-flex justify-content-end">
         <!-- add new course result record modal trigger -->
         <img src="{% static 'main/images/plus.png' %}" alt="add-record" class="plus-btn mb-2" type="button" data-toggle="modal" data-target="#AddResultModal">

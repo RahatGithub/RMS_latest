@@ -42,7 +42,7 @@
       {% for course in courses %}
       <div class="card course-card m-2 float-left shadow">
         <div class="card-body">
-            <h4 class="card-title">{{course.course_title}}</h4>
+            <h4 class="card-title text-primary">{{course.course_title}}</h4>
             <h5 class="card-title">Course code: {{course.course_code}}</h5>
             <h5 class="card-title">Credits: {{course.course_credits}}</h5>
             <h5 class="card-title">Teacher: {{course.course_teacher}}</h5>
@@ -53,12 +53,14 @@
               <img src="{% static 'main/images/play-button.png' %}" alt="edit" class="card-icon" type="button">
             </a>
           </div>
+          {% if request.user.is_superuser %}
           <div class="mx-2">
             <img src="{% static 'main/images/edit.png' %}" alt="edit" class="card-icon" type="button" data-toggle="modal" data-target="#">
           </div>
           <div class="mx-2">
             <img src="{% static 'main/images/delete1.png' %}" alt="delete" class="card-icon" type="button" data-toggle="modal" data-target="#">
           </div>
+          {% endif %}
         </div>
       </div>
       {% endfor %}

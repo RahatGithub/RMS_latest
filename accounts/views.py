@@ -9,9 +9,18 @@ def login(request):
         username = request.POST['username']
         password = request.POST['password']
         user = auth.authenticate(request, username=username, password=password)
+            
         if user:
             auth.login(request, user)
-            return redirect("/main/")
+            if request.user.is_superuser:
+                return redirect("/main/")
+            else: 
+                email = user.email 
+                teacher = Teacher.objects.filter(email=email).first() 
+                name = teacher.name 
+                institute = teacher.institute
+                department = teacher.department 
+                return redirect(f"/main/teachers/{institute}/{department}/{name}")
         else:           
             messages.info(request, "Wrong username or password!")
             return render(request, "accounts/login.html") 

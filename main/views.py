@@ -179,7 +179,10 @@ def course_view(request, batch_no, semester_no, course_type, course_code):
     
     course = Course.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
     students = Student.objects.filter(batch_no=batch_no)
-    
+    course_teacher = Teacher.objects.filter(name=course.course_teacher).first()
+    teacher_email = course_teacher.email
+    print(teacher_email)
+
     if request.method == "POST":
         if course_type == "Theory":
             reg_no = request.POST['reg_no']
@@ -272,7 +275,7 @@ def course_view(request, batch_no, semester_no, course_type, course_code):
                                                       current_semester_total_point=current_semester_total_point, 
                                                       current_semester_GPA=current_semester_GPA)
         
-        context = {'course':course,'results':results, 'students':students}
+        context = {'course':course,'results':results, 'students':students, 'teacher_email':teacher_email}
         return render(request, 'main/course_view.html', context)
     
     else:   # if not a POST request
@@ -281,7 +284,7 @@ def course_view(request, batch_no, semester_no, course_type, course_code):
         elif course_type == "Sessional":
             results = SessionalCourseResult.objects.filter(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
         
-        context = {'course':course,'results':results, 'students':students}
+        context = {'course':course,'results':results, 'students':students, 'teacher_email':teacher_email}
         return render(request, 'main/course_view.html', context)
 
 
@@ -298,8 +301,19 @@ def add_semester(request, batch_no):
 def delete_batch(request, batch_no):    
     try:
         batch = Batch.objects.get(batch_no=batch_no)
-        print(batch_no)
         batch.delete()
+    except:
+        pass
+
+    return redirect("/main/")
+
+
+def delete_teacher(request, name):    
+    try:
+        teacher = Teacher.objects.filter(name=name).first()
+        user = User.objects.filter(email=teacher.email).first()  # finding the user who has the same email
+        teacher.delete()
+        user.delete()
     except:
         pass
 
