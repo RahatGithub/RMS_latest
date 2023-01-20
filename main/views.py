@@ -37,6 +37,7 @@ def dashboard(request):
             user.save()
             teachers = Teacher.objects.all()
             batches = Batch.objects.all() 
+                
             new_teacher_info = {
                 'username' : username,
                 'password' : password,
@@ -51,21 +52,22 @@ def dashboard(request):
             return HttpResponse("ok")
         
         
-    teachers_collection = Teacher.objects.all()
-    teachers = list()
-    for teacher in teachers_collection:
-        a_teacher = dict()
-        a_teacher['name'] = teacher.name
-        a_teacher['designation'] = teacher.designation
-        a_teacher['department'] = teacher.department
-        a_teacher['institute'] = teacher.institute
+    # teachers_collection = Teacher.objects.all()
+    # teachers = list()
+    # for teacher in teachers_collection:
+    #     a_teacher = dict()
+    #     a_teacher['name'] = teacher.name
+    #     a_teacher['designation'] = teacher.designation
+    #     a_teacher['department'] = teacher.department
+    #     a_teacher['institute'] = teacher.institute
         
-        courses_collection = Course.objects.filter(course_teacher=teacher.name)
-        courses = list()
-        for course in courses_collection:
-            courses.append(course)
-        a_teacher['courses'] = courses 
-        teachers.append(a_teacher)
+    #     courses_collection = Course.objects.filter(course_teacher=teacher.name)
+    #     courses = list()
+    #     for course in courses_collection:
+    #         courses.append(course)
+    #     a_teacher['courses'] = courses 
+    #     teachers.append(a_teacher)
+    teachers = Teacher.objects.all()
     
     batches_collection = Batch.objects.all()    
     batches = list()
@@ -78,6 +80,7 @@ def dashboard(request):
         new_dict['batch_no'] = batch.batch_no
         new_dict['session'] = batch.session
         new_dict['semesters'] = new_list
+        students = Student.objects.filter(batch_no=batch.batch_no)
         batches.append(new_dict)
 
     return render(request, 'main/dashboard.html', {'batches' : batches, 'teachers' : teachers})
@@ -308,6 +311,42 @@ def students_view(request, batch_no):
     students = Student.objects.filter(batch_no=batch_no)
     batch = Batch.objects.filter(batch_no=batch_no).first()
     session = batch.session 
+
+    if request.method == "POST":
+        reg_no = request.POST["reg_no"]
+        name = request.POST["name"]
+        father_name = request.POST["father_name"]
+        mother_name = request.POST["mother_name"]
+        address = request.POST["address"]
+        phone = request.POST["phone"]
+        remarks = request.POST["remarks"]
+        try:
+            request.POST["is_cr"]
+            isCR = True
+        except:
+            isCR = False
+        try:
+            request.POST["is_residential"]
+            isResidential = True
+        except:
+            isResidential = False
+        
+        Student.objects.create(
+            reg_no=reg_no,
+            batch_no=batch_no,
+            session=session,
+            name=name,
+            father_name=father_name,
+            mother_name=mother_name,
+            address=address,
+            phone=phone,
+            isCR=isCR,
+            isResidential=isResidential,
+            remarks=remarks 
+        )
+
+        students = Student.objects.filter(batch_no=batch_no)
+
     return render(request, 'main/students.html', {'batch_no':batch_no, 'session':session, 'students':students})
 
 

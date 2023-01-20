@@ -1,493 +1,184 @@
 {% extends 'main/base.html' %}
 
+{% load static %}
+
 {% block title %} Dashboard {% endblock %}
+
+{% block css %} 
+.semester-circle 
+{
+  border-radius: 50%;
+  height: 25px;
+  width: 25px;
+}
+{% endblock %}
 
 {% block body %}
   
 {% if new_teacher_info %}
-    <p>{{new_teacher_info.username}}</p>
-    <p>{{new_teacher_info.password}}</p>
-    <p>{{new_teacher_info.email}}</p>
-  {% endif %}
-  
-  <!-- Add batch modal -->
-    <!-- Code block starts -->
-    <dh-component>
-      <div
-        class="py-60 bg-gray-700/80 transition duration-300 ease-in-out z-10 absolute top-0 right-0 bottom-0 left-0"
-        id="addBatchModal"
-      >
-        <div role="alert" class="container mx-auto w-11/12 md:w-2/3 max-w-lg">
-          <div
-            class="relative py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400"
-          >
-          <form action="" method="POST"> {% csrf_token %}
-            <input type="hidden" name="form_name" value="add_batch_form">
-            <label
-              for="batch_no"
-              class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-              >Batch no</label
-            >
-            <input
-              id="batch_no" name="batch_no"
-              class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder="e.g. CSE-15"
-            />
-            <label
-              for="session"
-              class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-              >Session</label
-            >
-            <input
-              id="session" name="session"
-              class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder="e.g. 2021-22"
-            />
-
-            <div class="flex items-center justify-start w-full">
-                <button
-                  class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-8 py-2 text-sm"
-                  type="submit"
-                >
-                Add
-                </button>
-              </form>
-              <!-- <button
-                class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 ml-3 bg-gray-100 transition duration-150 text-gray-600 ease-in-out hover:border-gray-400 hover:bg-gray-300 border rounded px-8 py-2 text-sm"  
-                >
-                Cancel
-              </button> -->
-            </div>
-            <button
-              class="cursor-pointer absolute top-0 right-0 mt-4 mr-5 text-gray-400 hover:text-gray-600 transition duration-150 ease-in-out rounded focus:ring-2 focus:outline-none focus:ring-gray-600"
-              onclick="AddBatchHandler()"
-              aria-label="close modal"
-              role="button"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon icon-tabler icon-tabler-x"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" />
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          </div>
-        </div>
+<!-- New Teacher Login Credentials Modal -->
+<div class="modal fade" id="LoginInfoModal" tabindex="-1" aria-labelledby="LoginInfoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="LoginInfoModalLabel">Remember these credentials to login later</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <div class="w-full flex justify-center py-12" id="button"></div>
-    </dh-component>
-    <!-- Add batch modal ends -->
-
-    <!-- Add teacher modal -->
-    <!-- Code block starts -->
-    <dh-component>
-      <div
-        class="py-60 bg-gray-700/80 transition duration-300 ease-in-out z-10 absolute top-0 right-0 bottom-0 left-0"
-        id="addTeacherModal"
-      >
-        <div role="alert" class="container mx-auto w-11/12 md:w-2/3 max-w-lg">
-          <div
-            class="relative py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400"
-          >
-          <form action="" method="POST"> {% csrf_token %}
-            <input type="hidden" name="form_name" value="add_teacher_form">
-            <div class="flex justify-between">
-              <div>
-                <label
-                for="first_name"
-                class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-                >First Name</label
-                > <br>
-                <input
-                  id="first_name" name="first_name"
-                  class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-                  placeholder="John"
-                />
-              </div>
-              <div>
-                <label
-                for="last_name"
-                class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-                >Last Name</label
-                > <br>
-                <input
-                  id="last_name" name="last_name"
-                  class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-                  placeholder="Doe"
-                />
-              </div>
-            </div>
-            <label
-              for="email"
-              class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-              >Email</label
-            >
-            <input
-              id="email" name="email" type="email"
-              class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder="john_doe@abc.com"
-            />
-            <label
-              for="phone"
-              class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-              >Phone</label
-            >
-            <input
-              id="phone" name="phone"
-              class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder="017********"
-            />
-            <label 
-              for="designation"
-              class="text-gray-800 text-sm font-bold leading-tight tracking-normal">
-              Designation:
-            </label>
-            <select 
-              name="designation" 
-              id="designation" 
-              class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border">
-              <option value="Lecturer">Lecturer</option>
-              <option value="Assisstant Proffessor">Assisstant Proffessor</option>
-              <option value="Associate Proffessor">Associate Proffessor</option>
-              <option value="Proffessor">Proffessor</option>
-            </select>
-            <label 
-              for="department"
-              class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-              >
-              Department:
-            </label>
-            <select 
-              name="department" 
-              id="department" 
-              class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-            >
-              <option value="Computer Science & Engineering">Computer Science & Engineering</option>
-              <option value="Electrical & Electronics Engineering">Electrical & Electronics Engineering</option>
-              <option value="Mechanical Engineering">Mechanical Engineering</option>
-              <option value="Industrial & Production Engineerng">Industrial & Production Engineerng</option>
-              <option value="Civil Engineerng">Civil Engineerng</option>
-              <option value="Mathematics">Mathematics</option>
-              <option value="Custom">Custom</option>
-            </select>
-            <label 
-            for="institute"
-            class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-            >
-            Institute:
-          </label>
-          <select 
-            name="institute" 
-            id="institute" 
-            class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border">
-            <option value="Sylhet Engineering College">Sylhet Engineering College</option>
-            <option value="Shahjalal University of Science & Technology">Shahjalal University of Science & Technology</option>
-            <option value="Leading University">Leading University</option>
-            <option value="MC College">MC College</option>
-            <option value="Sylhet Agricultural University">Sylhet Agricultural University</option>
-            <option value="Custom">Custom</option>
-          </select>
-
-            <div class="flex items-center justify-start w-full">
-                <button
-                  class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-8 py-2 text-sm"
-                  type="submit"
-                >
-                Add
-                </button>
-              </form>
-              <!-- <button
-                class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 ml-3 bg-gray-100 transition duration-150 text-gray-600 ease-in-out hover:border-gray-400 hover:bg-gray-300 border rounded px-8 py-2 text-sm"
-              >
-                Cancel
-              </button> -->
-            </div>
-            <button
-              class="cursor-pointer absolute top-0 right-0 mt-4 mr-5 text-gray-400 hover:text-gray-600 transition duration-150 ease-in-out rounded focus:ring-2 focus:outline-none focus:ring-gray-600"
-              onclick="AddTeacherHandler()"
-              aria-label="close modal"
-              role="button"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon icon-tabler icon-tabler-x"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" />
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="w-full flex justify-center py-12" id="button"></div>
-    </dh-component>
-    <!-- Add teacher modal ends -->
-
-  <!-- main body -->
-  <main class="main mt-5 container mx-auto">
-    <div class="my-10 grid grid-cols-3 gap-3">
-      <div class="left-batchs col-span-2 bg-gray-200 rounded p-3">
-        <div class="batch-top grid pb-3">
-          <h2 class="text-center text-xl font-bold text-indigo-500">
-            All Batches
-          </h2>
-          <button 
-            class="add-btn ml-auto bg-indigo-500 text-indigo-50 px-4 py-1 rounded hover:bg-indigo-600 duration-200"
-            id="addBatchBtn">
-              + Add
-          </button>
-        </div>
-
-        <div class="batch-cards grid grid-cols-3 gap-3 justify-center">
-        {% for batch in batches %}
-          <div
-            class="batch-card bg-white text-indigo-500 p-4 rounded shadow flex flex-col items-center gap-1 h-55 w-80 border-2 border-indigo-50/80 hover:shadow-lg hover:border-indigo-500 hover:border-2 duration-300"
-          >
-            <h2 class="batch-title text-3xl font-bold uppercase">
-              {{batch.batch_no}} ({{batch.session}})
-            </h2>
-            <div class="semesters flex flex-col">
-              <p class="text-center text-2xl">Semesters</p>
-              <div
-                class="flex justify-center items-center gap-1 text-lg py-2 flex-wrap"
-              >
-                
-                {% for semester in batch.semesters %}
-                <a
-                  href="semesters/{{semester.batch_no}}/{{semester.semester_no}}"
-                  class="semester bg-indigo-500 text-indigo-50 rounded-full h-8 w-8 text-center hover:bg-indigo-400 duration-100"
-                  >{{semester.semester_no}}</a>
-                {% endfor %}
-                {% if request.user.is_superuser and batch.semesters|length < 8 %}
-                <a
-                  href="add_semester/{{batch.batch_no}}"
-                  class="semester bg-indigo-50 border font-2xl border-indigo-500 text-indigo-500 rounded-full h-8 w-8 text-center hover:bg-indigo-600 hover:text-indigo-50 duration-100"
-                  >+</a
-                >
-                {% endif %}
-              </div>
-            </div>
-            <div class="flex justify-between items-center py-3 w-full">
-              <a
-                href="students/{{batch.batch_no}}"
-                class="students text-lg font-semibold bg-indigo-50 px-3 border rounded-full border-indigo-500 hover:bg-indigo-200 duration-200"
-                >Students</a
-              >
-              <a href="delete_batch/{{batch.batch_no}}">
-                <button
-                  class="bg-indigo-50 border rounded-full px-2 hover:border-indigo-300" type="button"
-                >
-                  Delete
-                </button>
-              </a>
-            </div>
-          </div>
-          <!-- delete confirmation modal starts -->
-          <!-- <dh-component>
-            <div
-              class="py-60 bg-gray-700/80 transition duration-300 ease-in-out z-10 absolute top-0 right-0 bottom-0 left-0"
-              id="modal"
-            >
-              <div role="alert" class="container mx-auto w-11/12 md:w-2/3 max-w-lg">
-                <div
-                  class="relative py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400"
-                >
-                <form action="" method="POST"> {% csrf_token %}
-                  <input type="hidden" name="form_name" value="delete_batch_form">
-                  <h2 class="text-center text-xl font-bold text-indigo-500">Are you sure about deleting {{batch.batch_no}} batch?</h2>
-                  <div class="flex items-center justify-start w-full">
-                      <button
-                        class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-8 py-2 text-sm"
-                        type="submit"
-                      >
-                      Delete
-                      </button>
-                    </form>
-                    <button
-                      class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 ml-3 bg-gray-100 transition duration-150 text-gray-600 ease-in-out hover:border-gray-400 hover:bg-gray-300 border rounded px-8 py-2 text-sm"
-                      onclick="modalHandler()"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                  <button
-                    class="cursor-pointer absolute top-0 right-0 mt-4 mr-5 text-gray-400 hover:text-gray-600 transition duration-150 ease-in-out rounded focus:ring-2 focus:outline-none focus:ring-gray-600"
-                    onclick="modalHandler()"
-                    aria-label="close modal"
-                    role="button"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="icon icon-tabler icon-tabler-x"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      stroke-width="2.5"
-                      stroke="currentColor"
-                      fill="none"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" />
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="w-full flex justify-center py-12" id="button"></div>
-          </dh-component> -->
-          <!-- delete confirmation modal ends -->
-        {% endfor %}
-        </div>
-      </div>
-      <div class="right bg-gray-200 grid p-3 rounded">
-        <div class="right-title">
-          <h2 class="text-center text-xl font-bold text-indigo-500">
-            Generate Grade Sheet
-          </h2>
-        </div>
-        <div
-          class="right-upper flex flex-col justify-center items-center gap-3 bg-gray-100 rounded border-b-2 border-indigo-400 p-3 mt-3"
-        >
-          <h2 class="text-xl font-semibold text-gray-500">
-            Input reg number
-          </h2>
-          <form action="" class="">
-            <input
-              type="text"
-              class="outline-none w-80 h-10 rounded-full px-3 border border-indigo-200"
-            />
-          </form>
-          <a
-            href="#"
-            class="students text-lg text-indigo-500 font-semibold bg-indigo-50 px-3 border rounded-full border-indigo-500 hover:bg-indigo-200 duration-200"
-            >Submit</a
-          >
-        </div>
-        <div class="right-lower pt-3">
-          <div
-            class="right-lower-title grid grid-cols-3 justify-center items-center"
-          >
-            <h2 class="text-xl font-bold text-indigo-500 gris col-span-2">
-              Teachers
-            </h2>
-            <button
-              class="add-btn ml-auto bg-indigo-500 text-indigo-50 px-4 py-1 rounded hover:bg-indigo-600 duration-200"
-              id="addTeacherBtn"
-            >
-              + Add
-            </button>
-          </div>
-          <div class="teachers-list">
-            {% for teacher in teachers %}
-            <div
-              class="teacher flex justify-between bg-gray-100 p-3 mt-3 shadow rounded border-2 border-indigo-50/80 hover:shadow-lg hover:border-indigo-500 hover:border-2 duration-300"
-            >
-              <div class="title flex flex-col max-w-[70%]">
-                <p class="font-semibold text-xl text-indigo-500">
-                  {{teacher.name}}
-                </p>
-                <p class="italic font-medium text-gray-500">{{teacher.designation}},</p>
-                <p class="italic font-medium text-gray-500">{{teacher.department}},</p>
-                <p class="italic font-medium text-gray-500">{{teacher.institute}}</p>
-              </div>
-              <div class="course flex flex-col">
-                <p
-                  class="font-semibold text-xl bg-indigo-100 rounded border text-center text-indigo-500"
-                >
-                  Courses
-                </p>
-                {% for course in teacher.courses %}
-                <p class="text-sm font-normal text-gray-600">
-                    <a href="courses/{{course.batch_no}}/{{course.semester_no}}/{{course.course_type}}/{{course.course_code}}" class="hover:bg-violet-300">{{course.course_code}}({{course.batch_no}})</a>
-                </p>
-                {% endfor %}
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-        </div>
+      <div class="modal-body">
+        <ul class="list-group">
+          <li class="list-group-item"><b>Email: </b>{{new_teacher_info.email}}</li>
+          <li class="list-group-item"><b>Username<small class="text-warning">(auto generated)</small>: </b>{{new_teacher_info.username}}</li>
+          <li class="list-group-item"><b>Password<small class="text-warning">(auto generated)</small>: </b>{{new_teacher_info.password}}</li>
+        </ul>
       </div>
     </div>
-  </main>
+  </div>
+</div>
+{% endif %}
+  
 
-{% endblock %}
-
-
-{% block js %}
-
-<script>  
-  let addBatchBtn = document.getElementById("addBatchBtn");
-  let addBatchModal = document.getElementById("addBatchModal");
-  let addTeacherBtn = document.getElementById("addTeacherBtn");
-  let addTeacherModal = document.getElementById("addTeacherModal");
-
-  addBatchBtn.addEventListener("click", AddBatchHandler);
-  addTeacherBtn.addEventListener("click", AddTeacherHandler);
-
-
-  //when 'Add batch' btn is clicked
-  function AddBatchHandler(val) {
-    if (val) {
-      fadeIn(addBatchModal);
-    } else {
-      fadeOut(addBatchModal);
-    }
-  }
-
-  //when 'Add teacher' btn is clicked
-  function AddTeacherHandler(val) {
-    if (val) {
-      fadeIn(addTeacherModal);
-    } else {
-      fadeOut(addTeacherModal);
-    }
-  }
+<!-- Add batch modal -->
+<div class="modal fade" id="AddBatchModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="AddBatchLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="AddBatchLabel">Add New Batch</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" class="p-3"> {% csrf_token %}  
+          <input type="hidden" name="form_name" value="add_batch_form">
+          <div class="d-flex justify-content-between">
+            <div class="form-group">
+              <label class="form-label">Batch No</label>
+              <input type="text" name="batch_no" class="form-control">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Session</label>
+              <input type="text" name="session" class="form-control">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary col-3 mt-2">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
-  function fadeOut(el) {
-    el.style.opacity = 1;
-    (function fade() {
-      if ((el.style.opacity -= 0.1) < 0) {
-        el.style.display = "none";
-      } else {
-        requestAnimationFrame(fade);
-      }
-    })();
-  }
-  function fadeIn(el, display) {
-    el.style.opacity = 0;
-    el.style.display = display || "flex";
-    (function fade() {
-      let val = parseFloat(el.style.opacity);
-      if (!((val += 0.2) > 1)) {
-        el.style.opacity = val;
-        requestAnimationFrame(fade);
-      }
-    })();
-  }
-</script>
+<!-- Add teacher modal -->
+    
+
+<!-- main body -->
+<section class="row mx-5 my-3">
+  <div class="col-7">
+    <div class="d-flex justify-content-center mt-5 mb-3">
+      <h4 class="bg-primary text-center text-white p-3 rounded-pill col-2">Batches</h4>
+    </div>
+
+    {% if request.user.is_superuser %}
+      <div class="d-flex justify-content-start">
+        <!-- add new batch modal trigger -->
+        <img src="{% static 'main/images/plus.png' %}" alt="add-record" class="plus-btn mb-2" type="button" data-toggle="modal" data-target="#AddBatchModal">
+      </div>
+    {% endif %}
+
+    <div class="course-list px-5 py-3 d-flex">
+      {% for batch in batches %}
+      <div class="card course-card m-2 shadow">
+        <div class="card-body">
+            <h3 class="card-title text-center">{{batch.batch_no}}</h3>
+            <h5 class="card-title text-center">{{batch.session}}</h5>
+            <h6 class="card-title">Semesters:</h6>
+            <div class="d-flex">
+              {% for semester in batch.semesters %}
+                {% if semester.batch_no == batch.batch_no  %}
+                  <div class="semester-circle mx-1 bg-secondary float-left d-flex justify-content-center align-items-center">
+                    <a href="semesters/{{semester.batch_no}}/{{semester.semester_no}}" class="text-light">{{semester.semester_no}}</a>
+                  </div>
+                {% endif %}
+              {% endfor %}
+              {% if request.user.is_superuser and batch.semesters|length < 8 %}
+                <div class="semester-circle mx-2 bg-warning float-left d-flex justify-content-center align-items-center">
+                  <a href="add_semester/{{batch.batch_no}}" class="text-light">+</a>
+                </div>  
+              {% endif %}
+            </div>
+        </div>
+        <div class="d-flex justify-content-between pb-3">
+          <div class="mx-2 ml-4">
+            <p class="special-bg text-dark px-2 py-1 rounded-pill"><b>Students</b></p>
+          </div>
+          <div class="d-flex justify-content-between">
+            <div class="mx-2">
+              <img src="{% static 'main/images/edit.png' %}" alt="edit" class="card-icon" type="button" data-toggle="modal" data-target="#">
+            </div>
+            <div class="mr-4">
+              <img src="{% static 'main/images/delete1.png' %}" alt="delete" class="card-icon" type="button" data-toggle="modal" data-target="#">
+            </div>
+          </div>
+      </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="col-5">
+    <!-- row 1 : gradesheet generator -->
+    <div class="row d-flex justify-content-center align-items-center bg-light border border-primary rounded pb-3">
+      <form action="" method="POST"> {% csrf_token %}
+        <div class="d-flex justify-content-center mt-5 mb-3">
+          <h5 class="bg-primary text-center text-white p-3 rounded-pill">Generate Grade Sheet</h5>
+        </div>
+        <div class="form-group text-center">
+          <label for="reg_no" class="fomr-label"><b>Registration No</b></label>
+          <input type="text" name="reg_no" class="form-control rounded-pill">
+        </div>
+      </form>
+    </div>
+    <!-- row 2 : teachers badge and plus button -->
+    <div class="row d-flex justify-content-between align-items-center">
+      <div class="col-8 d-flex justify-content-end mt-5 mb-3">
+        <h5 class="bg-primary text-center text-white p-3 rounded-pill col-5">Teachers</h5>
+      </div>
+      
+      {% if request.user.is_superuser %}
+      <div class="col-4 d-flex justify-content-end">
+        <!-- add new teacher modal trigger -->
+        <img src="{% static 'main/images/plus.png' %}" alt="add-teacher" class="plus-btn mb-2" type="button" data-toggle="modal" data-target="#AddTeacherModal">
+      </div>
+      {% endif %}
+    </div>
+    <!-- row 3 : teachers list -->
+    <div class="">
+      {% for teacher in teachers %}
+      <div class="p-3 m-2 row shadow">
+        <div class="col-8">
+          <h5 class="text-primary">{{teacher.name}}</h5>
+          <p style="line-height:15px;"><b><i>{{teacher.designation}}, {{teacher.department}}</i></b></p>
+          <p style="line-height:15px;"><b><i>{{teacher.institute}}</i></b></p>
+        </div>
+        <div class="col-4">
+          <div class="row d-flex justify-content-center my-1">
+            <a class="mx-2" href="/main/courses/{{batch_no}}/{{semester_no}}/{{course.course_type}}/{{course.course_code}}">
+              <img src="{% static 'main/images/play-button.png' %}" alt="edit" class="card-icon" type="button">
+            </a>
+          </div>
+          <div class="row d-flex justify-content-center my-1">
+            <img src="{% static 'main/images/edit.png' %}" alt="edit" class="card-icon" type="button" data-toggle="modal" data-target="#">
+          </div>
+          <div class="row d-flex justify-content-center my-1">
+            <img src="{% static 'main/images/delete1.png' %}" alt="delete" class="card-icon" type="button" data-toggle="modal" data-target="#">
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
 
 {% endblock %}
