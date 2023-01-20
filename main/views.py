@@ -5,6 +5,7 @@ from .models import Batch, Semester, Course, Student, TheoryCourseResult, Sessio
 import json
 from random import randint
 
+
 # this is the dashboard
 def dashboard(request):
     if request.method == "POST":  # when submitting the 'add batch' form

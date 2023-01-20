@@ -7,6 +7,8 @@
 
 {% block body %}
 
+{{global_var}}
+
 <!-- illustrator with detials -->
 <section class="text-with-img row">
     <div class="col-6 d-flex justify-content-end align-items-center">
@@ -31,7 +33,9 @@
         {% for course in courses %}
         <div class="card course-card m-2 float-left shadow">
             <div class="card-body">
-                <h5><span class="badge badge-info">{{course.batch_no}}</span></h5>
+                <div class="d-flex justify-content-end">
+                    <h5><span class="badge badge-info">{{course.batch_no}}</span></h5>
+                </div>
                 <h5 class="card-title text-primary">{{course.course_title}}</h5>
                 <h5 class="card-title">Course code: {{course.course_code}}</h5>
                 <h5 class="card-title">Credits: {{course.course_credits}}</h5>
