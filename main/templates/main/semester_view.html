@@ -55,7 +55,9 @@
           </div>
           {% if request.user.is_superuser %}
           <div class="mx-2">
-            <img src="{% static 'main/images/edit.png' %}" alt="edit" class="card-icon" type="button" data-toggle="modal" data-target="#">
+            <a href="/main/update_course/{{batch_no}}/{{semester_no}}/{{course.course_code}}">
+              <img src="{% static 'main/images/edit.png' %}" alt="edit" class="card-icon" type="button">
+            </a>
           </div>
           <div class="mx-2">
             <img src="{% static 'main/images/delete1.png' %}" alt="delete" class="card-icon" type="button" data-toggle="modal" data-target="#">

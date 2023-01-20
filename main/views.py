@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User, auth
 from .models import Batch, Semester, Course, Student, TheoryCourseResult, SessionalCourseResult, Result, Teacher
+from .forms import UpdateCourse
 import json
 from random import randint
 
@@ -296,6 +297,36 @@ def add_semester(request, batch_no):
     semester_no = len(semesters)+1
     Semester.objects.create(batch_no=batch_no, semester_no=semester_no)
     return redirect('/main/')
+
+
+# def update_course(request, batch_no, semester_no, course_code):
+#     if request.method == "POST":
+#         record = Course.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
+#         fm = UpdateCourse(request.POST, instance=record) # Generating a form with the values of the record with the given info
+#         if fm.is_valid():
+#             fm.save()
+#     else:
+#         record = Course.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
+#         fm = UpdateCourse(instance=record) 
+    
+#     context = {'form' : fm}
+#     return render(request, 'main/update_course.html', context)
+
+
+def update_course(request, batch_no, semester_no, course_code):
+    if request.method == "POST":
+        course_title = request.POST['course_title']
+        course_teacher = request.POST['course_teacher']
+        course = Course.objects.filter(batch_no=batch_no, semester_no=semester_no, course_code=course_code).first()
+        course.course_title, course.course_teacher = course_title, course_teacher  
+        course.save()
+        return redirect(f"/main/semesters/{batch_no}/{semester_no}")
+
+    else:
+        fm = UpdateCourse()
+    
+    context = {'form':fm}
+    return render(request, 'main/update_course.html', context)
 
 
 

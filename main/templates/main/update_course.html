@@ -1,0 +1,15 @@
+{% extends 'main/base.html' %}
+
+{% block title %} Update Course {% endblock %}
+
+{% block body %}
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-4 my-5 p-5 border border-success rounded">
+            <h4 class="alert alert-success text-center">Update Course Information</h4>
+            <form action="" method="POST">  {% csrf_token %}
+                {{form.as_p}}
+                <input type="submit" class="btn btn-warning" value="Update"> 
+            </form>
+        </div>
+    </div>
+{% endblock %}
