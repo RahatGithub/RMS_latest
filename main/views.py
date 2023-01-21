@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User, auth
 from .models import Batch, Semester, Course, Student, TheoryCourseResult, SessionalCourseResult, Result, Teacher
-from .forms import UpdateCourse
+from .forms import UpdateCourse, UpdateStudent
 import json
 from random import randint
 
@@ -48,29 +48,16 @@ def dashboard(request):
             return render(request, 'main/dashboard.html', {'batches' : batches, 'teachers' : teachers, 'new_teacher_info' : new_teacher_info})
         elif request.POST['form_name'] == 'gradesheet_generator_form':
             reg_no = request.POST['reg_no']
-            student = Student.objects.get(reg_no=reg_no)
-            session = student.session 
+            try:
+                student = Student.objects.get(reg_no=reg_no)
+                session = student.session 
+                return HttpResponse("student found.. gradesheet is on the way")
+            except:
+                return HttpResponse("Student not found")
             # return generate_pdf(request, session, reg_no)
-            return HttpResponse("ok")
         
-        
-    # teachers_collection = Teacher.objects.all()
-    # teachers = list()
-    # for teacher in teachers_collection:
-    #     a_teacher = dict()
-    #     a_teacher['name'] = teacher.name
-    #     a_teacher['designation'] = teacher.designation
-    #     a_teacher['department'] = teacher.department
-    #     a_teacher['institute'] = teacher.institute
-        
-    #     courses_collection = Course.objects.filter(course_teacher=teacher.name)
-    #     courses = list()
-    #     for course in courses_collection:
-    #         courses.append(course)
-    #     a_teacher['courses'] = courses 
-    #     teachers.append(a_teacher)
+
     teachers = Teacher.objects.all()
-    
     batches_collection = Batch.objects.all()    
     batches = list()
     for batch in batches_collection:
@@ -183,7 +170,6 @@ def course_view(request, batch_no, semester_no, course_type, course_code):
     students = Student.objects.filter(batch_no=batch_no)
     course_teacher = Teacher.objects.filter(name=course.course_teacher).first()
     teacher_email = course_teacher.email
-    print(teacher_email)
 
     if request.method == "POST":
         if course_type == "Theory":
@@ -299,19 +285,6 @@ def add_semester(request, batch_no):
     return redirect('/main/')
 
 
-# def update_course(request, batch_no, semester_no, course_code):
-#     if request.method == "POST":
-#         record = Course.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
-#         fm = UpdateCourse(request.POST, instance=record) # Generating a form with the values of the record with the given info
-#         if fm.is_valid():
-#             fm.save()
-#     else:
-#         record = Course.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
-#         fm = UpdateCourse(instance=record) 
-    
-#     context = {'form' : fm}
-#     return render(request, 'main/update_course.html', context)
-
 
 def update_course(request, batch_no, semester_no, course_code):
     if request.method == "POST":
@@ -321,12 +294,52 @@ def update_course(request, batch_no, semester_no, course_code):
         course.course_title, course.course_teacher = course_title, course_teacher  
         course.save()
         return redirect(f"/main/semesters/{batch_no}/{semester_no}")
-
     else:
-        fm = UpdateCourse()
-    
+        record = Course.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
+        fm = UpdateCourse(instance=record)
     context = {'form':fm}
     return render(request, 'main/update_course.html', context)
+
+
+
+def update_student(request, batch_no, reg_no):
+    # the student whose record has to be updated...
+    student = Student.objects.filter(reg_no=reg_no).first()
+    
+    if request.method == "POST":
+        name = request.POST['name']
+        father_name = request.POST['father_name']
+        mother_name = request.POST['mother_name']
+        address = request.POST['address']
+        phone = request.POST['phone']
+        try:
+            request.POST["isCR"]
+            isCR = True
+        except:
+            isCR = False
+        try:
+            request.POST["isResidential"]
+            isResidential = True
+        except:
+            isResidential = False
+        remarks = request.POST['remarks']
+        # updating the record...
+        student.name = name 
+        student.father_name = father_name
+        student.mother_name = mother_name
+        student.address = address
+        student.phone = phone 
+        student.isResidential = isResidential
+        student.isCR = isCR
+        student.remarks = remarks
+        student.save()
+
+        return redirect(f"/main/students/{batch_no}")
+    else:
+        fm = UpdateStudent(instance=student)
+    context = {'form':fm}
+    return render(request, 'main/update_student.html', context)
+
 
 
 
@@ -336,7 +349,6 @@ def delete_batch(request, batch_no):
         batch.delete()
     except:
         pass
-
     return redirect("/main/")
 
 
@@ -348,15 +360,26 @@ def delete_teacher(request, name):
         user.delete()
     except:
         pass
-
     return redirect("/main/")
+
+
+def delete_student(request, batch_no, reg_no):
+    try:
+        student = Student.objects.get(batch_no=batch_no, reg_no=reg_no)
+        student.delete()
+    except:
+        pass 
+    return redirect(f"/main/students/{batch_no}")
 
 
 
 def students_view(request, batch_no):  
     students = Student.objects.filter(batch_no=batch_no)
-    batch = Batch.objects.filter(batch_no=batch_no).first()
-    session = batch.session 
+    try:
+        batch = Batch.objects.filter(batch_no=batch_no).first()
+        session = batch.session 
+    except:
+        batch, session = "", ""
 
     if request.method == "POST":
         reg_no = request.POST["reg_no"]

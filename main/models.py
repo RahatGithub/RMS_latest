@@ -37,7 +37,7 @@ class Student(models.Model):
     isResidential = models.BooleanField(default=False)
     isCR = models.BooleanField(default=False) 
     average_cgpa = models.FloatField(default=0)
-    remarks = models.CharField(max_length=500, default="")
+    remarks = models.CharField(max_length=500, default="None")
 
 
 class Teacher(models.Model):

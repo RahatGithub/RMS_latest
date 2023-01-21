@@ -1,11 +1,11 @@
 {% extends 'main/base.html' %}
 
-{% block title %} Update Course Info {% endblock %}
+{% block title %} Update Student Info {% endblock %}
 
 {% block body %}
     <div class="row d-flex justify-content-center">
         <div class="col-md-4 my-5 p-5 border border-primary rounded">
-            <h4 class="alert alert-primary text-center">Update Course Information</h4>
+            <h4 class="alert alert-primary text-center">Update Student Information</h4>
             <form action="" method="POST">  {% csrf_token %}
                 {{form.as_p}}
                 <input type="submit" class="btn btn-primary col-2" value="Update"> 

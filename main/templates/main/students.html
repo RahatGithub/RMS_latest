@@ -40,7 +40,7 @@
 
   <table class="table table-hover bg-light">
       <thead>
-        <tr class="">
+        <tr class="text-center">
           <th scope="col">Registration</th>
           <th scope="col">Session</th>
           <th scope="col">Name</th>
@@ -50,11 +50,12 @@
           <th scope="col">Phone</th>
           <th scope="col">Avg CGPA</th>
           <th scope="col">Remarks</th>
+          <th scope="col">Action</th>
         </tr>
       </thead>
       <tbody>
           {% for student in students %}
-          <tr>
+          <tr class="text-center">
               <td>
                 {{student.reg_no}} 
                 {% if student.isResidential %}<span class="badge badge-info">Residential</span>{% endif %} 
@@ -68,6 +69,14 @@
               <td>{{student.phone}}</td>
               <td>{{student.average_cgpa}}</td>
               <td>{{student.remarks}}</td>
+              <td>
+                <a class="mx-2" href="/main/update_student/{{batch_no}}/{{student.reg_no}}">
+                  <img src="{% static 'main/images/edit.png' %}" alt="edit" class="table-icon" type="button">
+                </a>
+                <a class="mx-2" href="/main/delete_student/{{batch_no}}/{{student.reg_no}}">
+                  <img src="{% static 'main/images/delete1.png' %}" alt="delete" class="table-icon" type="button">
+                </a>
+              </td>
           </tr>
           {% endfor %}
       </tbody>
