@@ -1,0 +1,54 @@
+{% extends 'main/base.html' %}
+
+{% load static %}
+
+{% block title %} Overall Assessment {% endblock %}
+
+
+{% block body %}
+
+
+<section class="text-with-img row">
+    <div class="col-6 d-flex justify-content-end align-items-center">
+      <img src="{% static 'main/images/assessment.png' %}" alt="student" class="illustrator-img">
+    </div>
+    <div class="col-6 d-flex justify-content-start align-items-center">
+      <div class="text-dark p-4 rounded illustrator-details shadow">
+        <h4 class="mb-4">Overall Assessment Marks</h4>
+        <p><b>Batch no:</b> {{batch_no}}</p>
+        <p><b>Semester no:</b> {{semester_no}}</p>
+        <p><b>Course Code:</b> {{course_code}}</p>
+      </div>
+    </div>
+</section>
+
+
+<section class="d-flex justify-content-center mx-5 mt-2 mb-5">
+    <table class="table table-hover bg-light w-75">
+        <thead>
+          <tr class="text-center">
+            <th scope="col">Registration</th>
+            <th scope="col">Name</th>
+            <th scope="col">Term Test</th>
+            <th scope="col">Assignment</th>
+            <th scope="col">Attendance</th>
+            <th scope="col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in full_batch_overall_assessment_marks %}
+            <tr class="text-center">
+                <td>{{record.0}}</td>
+                <td>{{record.1}}</td>
+                <td>{{record.2}}</td>
+                <td>{{record.3}}</td>
+                <td>{{record.4}}</td>
+                <td>{{record.5}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+
+{% endblock %}

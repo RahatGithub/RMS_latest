@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User, auth
-from .models import Batch, Semester, Course, Student, TheoryCourseResult, SessionalCourseResult, Result, Teacher
+from .models import Batch, Semester, Course, Student, TheoryCourseResult, SessionalCourseResult, Result, Teacher, AssessmentResult
 from .forms import UpdateCourse, UpdateStudent
 import json
 from random import randint
@@ -440,3 +440,429 @@ def calculate_LG(GP):
     elif GP >= 2.00 : LG = "C-" 
     else: LG = "F"
     return LG 
+
+
+
+# ************ EVERYTHING BELOW IS EXPERIMENTAL *************
+
+
+
+
+def assessments(request, batch_no, semester_no, course_code):
+    students = Student.objects.filter(batch_no=batch_no)
+
+    if request.method == "POST":
+        if request.POST['form_name'] == 'add_tt_form':
+            total_marks = int(request.POST['total_marks'])
+            try: # if there is already an instance of AssessmentResult for this course
+                assessment = AssessmentResult.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
+                tt_results = json.loads(assessment.tt_results)
+                a_tt = dict()
+                a_tt['total_marks'] = total_marks
+                a_tt['results'] = list()
+                tt_results.append(a_tt)
+                tt_results_json = json.dumps(tt_results)
+                assessment.tt_results = tt_results_json
+                assessment.save() 
+                assignment_results = json.loads(assessment.assignment_results)
+                tt_counting_on = assessment.tt_counting_on
+                assignment_counting_on = assessment.assignment_counting_on
+            except: # if there is no instance of AssessmentResult for this course
+                tt_results = list()
+                a_tt = dict()
+                a_tt['total_marks'] = total_marks
+                a_tt['results'] = list()
+                tt_results.append(a_tt)
+                tt_results_json = json.dumps(tt_results)
+                tt_counting_on = 20
+                assignment_results = list()
+                assignment_counting_on = 10
+                AssessmentResult.objects.create(
+                    batch_no = batch_no,
+                    semester_no = semester_no,
+                    course_code = course_code,
+                    tt_mode = "average",
+                    tt_counting_on = tt_counting_on,
+                    tt_results = tt_results_json,
+                    assignment_counting_on = assignment_counting_on,
+                    assignment_results = "[]", 
+                    attendance_counting_on = 10,
+                    attendance_results = "[]"
+                )
+            return redirect(f"/main/assessments/{batch_no}/{semester_no}/{course_code}")
+
+        elif request.POST['form_name'] == 'add_assignment_form':
+            total_marks = int(request.POST['total_marks'])
+            try: # if there is already an instance of AssessmentResult for this course
+                assessment = AssessmentResult.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
+                assignment_results = json.loads(assessment.assignment_results)
+                a_assignment = dict()
+                a_assignment['total_marks'] = total_marks
+                a_assignment['results'] = list()
+                assignment_results.append(a_assignment)
+                assignment_results_json = json.dumps(assignment_results)
+                assessment.assignment_results = assignment_results_json
+                assessment.save() 
+                tt_results = json.loads(assessment.tt_results)
+                tt_mode = assessment.tt_mode
+                tt_counting_on = assessment.tt_counting_on
+                assignment_counting_on = assessment.assignment_counting_on
+            except: # if there is no instance of AssessmentResult for this course
+                assignment_results = list()
+                a_assignment = dict()
+                a_assignment['total_marks'] = total_marks
+                a_assignment['results'] = list()
+                assignment_results.append(a_assignment)
+                assignment_results_json = json.dumps(assignment_results)
+                tt_results = list()
+                tt_counting_on = 20 
+                assignment_counting_on = 10
+                tt_mode = "average"
+                AssessmentResult.objects.create(
+                    batch_no = batch_no,
+                    semester_no = semester_no,
+                    course_code = course_code,
+                    tt_mode = tt_mode,
+                    tt_counting_on = tt_counting_on,
+                    tt_results = "[]",
+                    assignment_results = assignment_results_json,
+                    assignment_counting_on = assignment_counting_on,
+                    attendance_counting_on = 10,
+                    attendance_results = "[]"
+                )
+            return redirect(f"/main/assessments/{batch_no}/{semester_no}/{course_code}")
+
+        elif request.POST['form_name'] == 'add_tt_marks_form':
+            tt_no = int(request.POST['tt_no'])
+            reg_no = request.POST['reg_no']
+            student = Student.objects.get(reg_no=reg_no)
+            name = student.name 
+            obtained_marks = int(request.POST['obtained_marks'])
+            assessment = AssessmentResult.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
+            tt_results = json.loads(assessment.tt_results)            
+            a_record = [reg_no, name, obtained_marks]
+            tt_results[tt_no-1]['results'].append(a_record)
+            tt_results_json = json.dumps(tt_results)
+            assessment.tt_results = tt_results_json
+            assessment.save()
+            assignment_results = json.loads(assessment.assignment_results)
+            tt_mode = assessment.tt_mode
+            tt_counting_on = assessment.tt_counting_on
+            assignment_counting_on = assessment.assignment_counting_on
+
+            return redirect(f"/main/assessments/{batch_no}/{semester_no}/{course_code}")
+        
+        elif request.POST['form_name'] == 'add_assignment_marks_form':
+            assignment_no = int(request.POST['assignment_no'])
+            reg_no = request.POST['reg_no']
+            student = Student.objects.get(reg_no=reg_no)
+            name = student.name 
+            obtained_marks = int(request.POST['obtained_marks'])
+            assessment = AssessmentResult.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
+            assignment_results = json.loads(assessment.assignment_results)            
+            a_record = [reg_no, name, obtained_marks]
+            assignment_results[assignment_no-1]['results'].append(a_record)
+            assignment_results_json = json.dumps(assignment_results)
+            assessment.assignment_results = assignment_results_json
+            assessment.save()
+            tt_results = json.loads(assessment.tt_results)
+            tt_mode = assessment.tt_mode
+            tt_counting_on = assessment.tt_counting_on
+            assignment_counting_on = assessment.assignment_counting_on
+
+            return redirect(f"/main/assessments/{batch_no}/{semester_no}/{course_code}")
+        
+        elif request.POST['form_name'] == 'tt_info_submit_form':
+            tt_mode = request.POST['tt_mode']
+            tt_counting_on = int(request.POST['counting_on'])
+            try:
+                assessment = AssessmentResult.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
+                assessment.tt_mode = tt_mode 
+                assessment.tt_counting_on = tt_counting_on
+                assessment.save() 
+                tt_results = json.loads(assessment.tt_results)
+                assignment_results = json.loads(assessment.assignment_results) 
+                assignment_counting_on = assessment.assignment_counting_on
+            except:
+                tt_results, assignment_results = [], []
+                assignment_counting_on = 10
+                AssessmentResult.objects.create(
+                    batch_no = batch_no,
+                    semester_no = semester_no, 
+                    course_code = course_code, 
+                    tt_mode = tt_mode, 
+                    tt_counting_on = tt_counting_on, 
+                    tt_results = "[]",
+                    assignment_counting_on = assignment_counting_on,
+                    assignment_results = "[]",
+                    attendance_counting_on = 10,
+                    attendance_results = "[]"
+                )
+            return redirect(f"/main/assessments/{batch_no}/{semester_no}/{course_code}")
+        
+        elif request.POST['form_name'] == 'assignment_info_submit_form':
+            assignment_counting_on = int(request.POST['counting_on'])
+            try:
+                assessment = AssessmentResult.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
+                assessment.assignment_counting_on = assignment_counting_on
+                assessment.save() 
+                tt_results = json.loads(assessment.tt_results)
+                assignment_results = json.loads(assessment.assignment_results) 
+                tt_counting_on = assessment.tt_counting_on
+                tt_mode = assessment.tt_mode
+            except:
+                AssessmentResult.objects.create(
+                    batch_no = batch_no,
+                    semester_no = semester_no, 
+                    course_code = course_code, 
+                    tt_mode = "average", 
+                    tt_counting_on = 20, 
+                    tt_results = "[]",
+                    assignment_counting_on = 10,
+                    assignment_results = "[]",
+                    attendance_counting_on = 10,
+                    attendance_results = "[]"
+                )
+            return redirect(f"/main/assessments/{batch_no}/{semester_no}/{course_code}")
+
+        elif request.POST['form_name'] == 'attendance_info_submit_form':
+            attendance_counting_on = int(request.POST['counting_on'])
+            try:
+                assessment = AssessmentResult.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
+                assessment.attendance_counting_on = attendance_counting_on
+                assessment.save() 
+            except:
+                AssessmentResult.objects.create(
+                    batch_no = batch_no,
+                    semester_no = semester_no, 
+                    course_code = course_code, 
+                    tt_mode = "average", 
+                    tt_counting_on = 20, 
+                    tt_results = "[]",
+                    assignment_counting_on = 10,
+                    assignment_results = "[]",
+                    attendance_counting_on = attendance_counting_on,
+                    attendance_results = "[]"
+                )
+            return redirect(f"/main/assessments/{batch_no}/{semester_no}/{course_code}")
+
+    # if it is a GET request:
+    try:
+        assessment = AssessmentResult.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
+        # for term tests:
+        tt_results = json.loads(assessment.tt_results)
+        tt_mode = assessment.tt_mode
+        tt_counting_on = assessment.tt_counting_on
+        # for assignments:
+        assignment_results = json.loads(assessment.assignment_results)
+        assignment_counting_on = assessment.assignment_counting_on
+        # for attendance:
+        attendance_results = json.loads(assessment.attendance_results)
+        attendance_counting_on = assessment.attendance_counting_on
+    except:
+        tt_results = []
+        assignment_results = []
+        attendance_results = []
+        tt_mode = "average"
+        tt_counting_on = 20
+        assignment_counting_on = 10
+        attendance_counting_on = 10
+
+    context = {
+        'batch_no' : batch_no,
+        'semester_no' : semester_no,
+        'course_code' : course_code,
+        'students' : students,
+        'tt_results' : tt_results,
+        'tt_mode' : tt_mode,
+        'tt_counting_on' : tt_counting_on,
+        'assignment_results' : assignment_results,
+        'assignment_counting_on' : assignment_counting_on, 
+        'attendance_results' : attendance_results,
+        'attendance_counting_on' : attendance_counting_on
+    }
+
+    return render(request, 'main/assessment.html', context)
+
+
+
+def add_attendance(request, batch_no, semester_no, course_code):
+    students = Student.objects.filter(batch_no=batch_no)
+    
+    if request.method == "POST":
+        equal_to = int(request.POST['equal_to'])
+        try: 
+            assessment = AssessmentResult.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
+            attendance_results = json.loads(assessment.attendance_results)
+            a_class = dict()
+            a_class['equal_to'] = equal_to
+            attendance = list()
+            for student in students:
+                try:
+                    att = request.POST[student.reg_no]
+                    att_class = equal_to
+                except:
+                    att_class = 0
+                attendance.append([student.reg_no, student.name, att_class])
+                a_class['attendance'] = attendance
+            attendance_results.append(a_class)
+            attendance_results_json = json.dumps(attendance_results)
+            assessment.attendance_results = attendance_results_json
+            assessment.save()
+        except:
+            attendance_results = list()
+            a_class = dict()
+            a_class['equal_to'] = equal_to
+            a_class['attendance'] = list()
+            for student in students:
+                try:
+                    att = request.POST[student.reg_no]
+                    att_class = equal_to
+                except:
+                    att_class = 0
+                a_class['attendance'].append([student.reg_no, student.name, att_class])
+            attendance_results.append(a_class)
+            attendance_results_json = json.dumps(attendance_results)
+
+            AssessmentResult.objects.create(
+                    batch_no = batch_no,
+                    semester_no = semester_no, 
+                    course_code = course_code, 
+                    tt_mode = "average", 
+                    tt_counting_on = 20, 
+                    tt_results = "[]",
+                    assignment_counting_on = 10,
+                    assignment_results = "[]", 
+                    attendance_counting_on = 10,
+                    attendance_results = attendance_results_json
+            )
+
+        return redirect(f"/main/assessments/{batch_no}/{semester_no}/{course_code}")
+    
+    
+    context = {
+        'students' : students,
+        'batch_no' : batch_no,
+        'semester_no' : semester_no,
+        'course_code' : course_code
+    }
+    return render(request, 'main/add_attendance.html', context)
+
+
+
+
+def overall_assessment(request, batch_no, semester_no, course_code):
+    assessment = AssessmentResult.objects.get(batch_no=batch_no, semester_no=semester_no, course_code=course_code)
+    tt_results = json.loads(assessment.tt_results)
+    assignment_results = json.loads(assessment.assignment_results)
+    attendance_results = json.loads(assessment.attendance_results)
+    tt_mode = assessment.tt_mode 
+    tt_counting_on = assessment.tt_counting_on
+    assignment_counting_on = assessment.assignment_counting_on
+    attendance_counting_on = assessment.attendance_counting_on
+    students = Student.objects.filter(batch_no=batch_no)
+    
+    full_batch_overall_assessment_marks = list()
+
+    
+    for i,student in enumerate(students):
+        a_std = list() 
+        a_std.append(student.reg_no)
+        a_std.append(student.name)
+        all_tt_marks = list()
+        all_assignment_marks = list()
+        all_attendance_marks = list()
+
+        # calculating tt marks
+        for tt_res in tt_results:
+            obtained_marks = tt_res['results'][i][2]
+            total_marks = tt_res['total_marks']
+            all_tt_marks.append([obtained_marks, total_marks])
+        a_std_final_tt_marks = calculate_overall_marks(tt_mode, tt_counting_on, all_tt_marks)
+        a_std.append(a_std_final_tt_marks)
+
+        # calculating assignment marks
+        for ass_res in assignment_results:
+            obtained_marks = ass_res['results'][i][2]
+            total_marks = ass_res['total_marks']
+            all_assignment_marks.append([obtained_marks, total_marks])
+        a_std_final_assignment_marks = calculate_overall_marks("average", assignment_counting_on, all_assignment_marks)
+        a_std.append(a_std_final_assignment_marks)
+
+        # calculating attendance marks
+        for att_res in attendance_results:
+            attended_classes = att_res['attendance'][i][2]
+            equal_to = att_res['equal_to']
+            all_attendance_marks.append([attended_classes, equal_to])
+        a_std_final_attendance_marks = calculate_attendance(attendance_counting_on, all_attendance_marks)
+        a_std.append(a_std_final_attendance_marks)
+
+        a_std_final_marks = a_std_final_tt_marks + a_std_final_assignment_marks + a_std_final_attendance_marks
+        a_std.append(a_std_final_marks)
+
+        # finally getting all records of tt and assignments
+        full_batch_overall_assessment_marks.append(a_std)
+
+
+
+    context = {
+        'batch_no' : batch_no,
+        'semester_no' : semester_no,
+        'course_code' : course_code,
+        'full_batch_overall_assessment_marks' : full_batch_overall_assessment_marks
+    }
+    
+    return render(request, 'main/overall_assessment.html', context)
+    # return HttpResponse(full_batch_overall_assessment_marks)
+    
+
+
+
+
+from math import ceil
+
+def calculate_overall_marks(mode, counting_on, results):  # e.g. ("normal", 20, [[8,10], [9,10]])
+    final_marks = 0
+    if mode == "normal":
+        for result in results:
+            final_marks += result[0]
+
+    elif mode == "average":
+        num = len(results) 
+        total_marks = 0
+        for result in results:
+            total_marks += int((counting_on/result[1])*result[0])
+        try:
+            final_marks = ceil(total_marks/num)
+        except:
+            final_marks = 0
+
+    elif mode == "best_one":
+        marks = [] 
+        for result in results:
+            marks.append(int((counting_on/result[1])*result[0]))
+        final_marks = max(marks)
+
+    elif mode == "best_two":
+        marks = [] 
+        for result in results:
+            marks.append(int((counting_on/result[1])*result[0])) 
+        best = marks.pop(marks.index(max(marks))) // int(counting_on/result[1])
+        second_best = marks.pop(marks.index(max(marks))) // int(counting_on/result[1])
+        final_marks = (best + second_best) // 2
+
+    return final_marks
+
+
+def calculate_attendance(counting_on, results):  # e.g. (10, [ [1,1],[0,2],[2,2],[1,1] ])
+    total_classes = 0
+    attended_classes = 0
+    for result in results:
+        total_classes += result[1]
+        attended_classes += result[0]
+    try:
+        final_marks = ceil((attended_classes/total_classes)*counting_on)
+    except: 
+        final_marks = 0
+
+    return final_marks
