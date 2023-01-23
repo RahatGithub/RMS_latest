@@ -1,0 +1,279 @@
+{% load static %}
+<!DOCTYPE html>
+
+<head>
+    <style>
+        @media print {
+            .teacher {
+                page-break-after: always;
+            }
+
+            /* #print {
+                    size: 21cm 29.7cm;
+                    margin: 10mm 7mm 10mm 7mm;
+                } */
+        }
+
+        @page {
+            size: 21cm 29.7cm;
+            margin: 10mm 7mm 10mm 7mm;
+            /* .teacher {page-break-after: always;} */
+        }
+
+        /* #print {
+                height: 29.7cm;
+            } */
+        /* #print > .container:not(:first-child) {
+                margin-top: 10em;
+            } */
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .container {
+            display: grid;
+            grid-template-rows: .5fr 1fr .1fr 2.5fr .1fr 2.5fr 2fr;
+            line-height: .1em;
+            height: 29.7cm;
+        }
+
+        .heading {
+            display: grid;
+            grid-template-columns: .4fr 3fr;
+            line-height: 2.3em;
+        }
+
+        .heading_title {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        .heading_title {
+            display: grid;
+            line-height: 2em;
+
+        }
+
+        .heading_logo {
+            display: grid;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo {
+            /* padding-left: 2em; */
+            height: 4.1em;
+            width: 4.1em;
+        }
+
+        .title {
+            /* padding-top: 1em; */
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            padding-bottom: 3em;
+        }
+
+        .title_left {
+            display: grid;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .title_left_container {
+            line-height: 1.7em;
+            padding-top: 1em;
+            width: 100%;
+            /* height: 50%; */
+            /* padding: 4.5em 0em 4.5em 0em; */
+            display: grid;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .f {
+            font-weight: bold;
+            padding-bottom: .3em;
+        }
+
+        .title_right {
+            font-size: .70em;
+            /* border: 1px solid red; */
+            display: grid;
+            justify-content: right;
+        }
+
+        .title_right_container {
+            /* height: 17em; */
+            line-height: 1em;
+            width: 20em;
+            padding: .5em;
+            /* border: 1px solid red; */
+            display: grid;
+            grid-template-columns: 2.5fr .6fr 1fr;
+        }
+
+        .info {
+            width: 100%;
+            padding-top: 1em;
+            display: grid;
+            grid-template-columns: 2fr .2fr 4.5fr;
+            line-height: 1.2em;
+        }
+
+        .table {
+            font-size: .9em;
+            padding: 1em;
+            display: grid;
+            line-height: 1.1em;
+            grid-template-columns: .5fr 2fr .3fr .5fr .5fr;
+        }
+
+        /* .table > span {
+                border: 1px solid black;
+            } */
+        .table>span:nth-child(-n + 5) {
+            border-bottom: 1px solid black;
+            padding-bottom: .2em;
+            margin-bottom: .5em;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .table>span {
+            /* padding-top: .3em; */
+            padding-bottom: .3em;
+            text-align: center;
+        }
+
+        .left {
+            text-align: left !important;
+        }
+
+        .right {
+            text-align: left !important;
+            margin-left: 15em !important;
+            font-weight: bold;
+        }
+
+        .teacher {
+            position: relative;
+            font-size: .8em;
+            margin-bottom: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1.7fr;
+            align-items: center;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            font-style: italic;
+        }
+
+        .teacher>div:first-child {
+            text-align: left;
+        }
+
+        .teacher>div:not(:first-child) {
+            display: grid;
+            align-items: center;
+            justify-content: center;
+            width: 80%;
+            padding-top: .5em;
+            text-align: center;
+            border-top: 1px;
+            border-style: dotted none none none;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body onload="generatePDF()">
+    <button style="display:none" id="download-button" >Download as PDF</button>
+    <div id="print">
+        <!-- page: 1 -->
+        {% for couple in collection %}
+        <div class="container">
+            <div class="heading">
+                <div class="heading_logo">
+                    <img src="{% static 'main/images/sust.png' %}" alt="home" class="mx-5"
+                        style="height:70px; width:70px">
+                </div>
+                <div class="heading_title">
+                    <h2>SHAHJALAL UNIVERSITY OF SCIENCE & TECHNOLOGY <br> SYLHET, BANGLADESH </h2>
+                </div>
+
+            </div>
+            <div class="title">
+                <div class="title_left">
+                    <div class="title_left_container">
+                        <h2>Grade Certificte</h2>
+                        <p>B.S.C. in CSE Examination</p>
+                        <h3>Session : {{session}}</h2>
+                    </div>
+                    <div class="info">
+                        <span class="f">Institution</span><span>:</span><span>Sylhet Engineering College</span>
+                        <span class="f">Department</span><span>:</span><span>Computer Science & Engineering</span>
+                        <span class="f">Registration No.</span><span>:</span><span>{{reg_no}}</span>
+                        <span class="f">Student's Name</span><span>:</span><span>{{student_name}}</span>
+
+                    </div>
+                </div>
+                <div class="title_right">
+                    <div class="title_right_container">
+                        <span class="f">Numeric Grade</span><span class="f">LG</span><span class="f">GP</span>
+                        <span>80% or above</span><span>A+</span><span>4.00</span>
+                        <span>75% to less than 80%</span><span>A</span><span>3.75</span>
+                        <span>70% to less than 75%</span><span>A-</span><span>3.50</span>
+                        <span>65% to less than 70%</span><span>B+</span><span>3.25</span>
+                        <span>60% to less than 65%</span><span>B</span><span>3.00</span>
+                        <span>55% to less than 60%</span><span>B-</span><span>2.75</span>
+                        <span>50% to less than 55%</span><span>C+</span><span>2.50</span>
+                        <span>45% to less than 50%</span><span>C</span><span>2.25</span>
+                        <span>40% to less than 45%</span><span>C-</span><span>2.00</span>
+                        <span>less than 40%</span><span>F</span><span>0.00</span>
+                    </div>
+                </div>
+
+            </div>
+
+            {% for semester in couple %}
+            <div style="padding-bottom: .5em;text-align:left;padding-top:1em;font-weight: bold;">{{semester.this_semester_name}}</div>
+            <div class="table">
+                <span>Course No.</span><span class="left">Course Title</span><span>Credit</span><span>Grade
+                    Point</span><span>Letter Grade</span>
+                {% for course_res in semester.course_results_info %}
+                    <span>{{course_res.0}}</span><span class="left">{{course_res.1}}</span><span>{{course_res.2}}</span><span>{{course_res.3}}</span><span>{{course_res.4}}</span>
+                {% endfor %}
+                <span></span><span class="right">This Semester Total
+                    :</span><span>{{semester.this_semester_credits}}</span><span>{{semester.this_semester_GP}}</span><span>{{semester.this_semester_LG}}</span>
+                <span></span><span class="right">Comulative :</span><span>{{semester.cumulative_credits}}</span><span>{{semester.cumulative_GP}}</span><span>{{semester.cumulative_LG}}</span>
+            </div>
+            {% endfor %}
+
+            <div class="teacher">
+                <div style="font-size: .9em;">
+                    <b>Printed on :</b> 20-Oct-22
+                </div>
+                <div>Prepared by</div>
+                <div>Compared by</div>
+                <div>Deputy Controller of Examination</div>
+            </div>
+        </div>
+        {% endfor %}
+        
+    </div>
+    <script>
+        const button = document.getElementById("download-button");
+
+        function generatePDF() {
+            const element = document.getElementById("print");
+            html2pdf().from(element).save();
+            windows.history.back()
+        }
+    </script>
+</body>
+
+</html>
