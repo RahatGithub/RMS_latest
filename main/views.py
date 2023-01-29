@@ -57,7 +57,7 @@ def dashboard(request):
                 session = student.session
                 return redirect(f"/main/gradesheet_view/{reg_no}")
             except:
-                pass
+                return render(request, 'main/404.html')
                 # return generate_pdf(request, session, reg_no)
 
     teachers = Teacher.objects.all()
@@ -1018,8 +1018,7 @@ def gradesheet_view(request, reg_no):
 
         gradesheet.append(a_semester)
 
-    # for gs in gradesheet:
-    #     print(gs, end="\n\n")
+    # print(gradesheet)
 
     li = []
     a = []
@@ -1044,3 +1043,5 @@ def gradesheet_view(request, reg_no):
             print(single)
 
     return render(request, 'main/gradesheet_view.html', {'session': session, 'reg_no': reg_no, 'student_name': student_name, 'gradesheet': gradesheet, 'collection': li})
+
+

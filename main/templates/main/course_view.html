@@ -7,6 +7,15 @@
 
 {% block body %}
 
+<div class="d-flex justify-content-center">
+  <div class="alert alert-success mx-5 my-3 text-center">
+    <a href="/main/assessments/{{course.batch_no}}/{{course.semester_no}}/{{course.course_code}}" class="text text-dark">
+      <h5>Go to assessments page</h5>
+    </a>
+  </div>  
+</div>
+
+
 <section class="text-with-img row">
   <div class="col-6 d-flex justify-content-end align-items-center">
     <img src="{% static 'main/images/student1.png' %}" alt="student" class="illustrator-img">
